@@ -33,6 +33,7 @@ This project aims to automate disease detection using artificial intelligence fo
 ---
 
 ## 📂 Project Structure
+```
 CropGuard-AI-Disease-Detection/
 │
 ├── data/               # Dataset (raw & processed)
@@ -44,6 +45,7 @@ CropGuard-AI-Disease-Detection/
 ├── models/             # Saved ML models
 ├── README.md
 └── requirements.txt
+```
 ---
 
 ## 📊 Results
