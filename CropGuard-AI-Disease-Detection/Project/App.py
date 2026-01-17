@@ -13,9 +13,9 @@ from concurrent.futures import ThreadPoolExecutor
 app = Flask(__name__)
 
 # Configuration
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'CropGuard-AI-Disease-Detection/Project/static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MODEL_PATH = "model.h5"
+MODEL_PATH = "CropGuard-AI-Disease-Detection/Project/model.h5"
 MAX_WORKERS = 2  # Limit concurrent predictions
 
 # Create upload folder if it doesn't exist
