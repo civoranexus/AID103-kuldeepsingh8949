@@ -24,9 +24,8 @@
                 <span>CropGuard AI</span>
             </div>
             <nav>
-                <a href="#home" class="active">Home</a>
-                <a href="#features">Features</a>
-                <a href="#how-it-works">How It Works</a>
+                <a href="/" class="active">Home</a>
+                <a href="/analyze">Analyze</a>
                 <a href="/about">About</a>
             </nav>
         </div>
@@ -41,12 +40,12 @@
                     Upload a plant leaf image and get instant disease diagnosis using deep learning and computer vision.
                 </p>
                 <div class="hero-actions">
-                    <button class="btn primary" onclick="scrollToUpload()">
-                    <i class="fas fa-upload"></i> Start Analysis
-                </button>
+                    <a href="/analyze" class="btn primary">
+                        <i class="fas fa-upload"></i> Start Analysis
+                    </a>
                     <button class="btn outline" onclick="scrollToFeatures()">
-                    Learn More
-                </button>
+                        Learn More
+                    </button>
                 </div>
             </div>
 
@@ -56,49 +55,61 @@
         </div>
     </section>
 
-    <!-- UPLOAD -->
-    <section id="upload" class="upload">
-        <div class="container upload-box">
-            <h2>Upload Plant Image</h2>
-            <p>Upload a clear leaf image for best results</p>
-
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Click or Drag Image</h3>
-                <p>JPG, PNG, JPEG supported</p>
-                <input type="file" id="fileInput" accept="image/*" hidden>
+    <!-- PROJECT OVERVIEW -->
+    <section id="overview" class="overview">
+        <div class="container">
+            <h2>About CropGuard AI</h2>
+            <div class="overview-content">
+                <div class="overview-text">
+                    <p>
+                        CropGuard AI is an advanced plant disease detection system powered by deep learning and computer vision. 
+                        Our platform helps farmers and agricultural professionals quickly identify plant diseases by analyzing 
+                        leaf images with state-of-the-art convolutional neural networks (CNNs).
+                    </p>
+                    <p>
+                        The system is trained on a comprehensive dataset of plant diseases and can identify various crop diseases 
+                        with high accuracy, providing instant diagnosis and confidence scores to help users make informed decisions 
+                        about crop management.
+                    </p>
+                </div>
             </div>
-
-            <button class="btn primary analyze-btn" onclick="analyzeImage()">
-            Analyze Disease
-        </button>
         </div>
     </section>
 
     <!-- FEATURES -->
     <section id="features" class="features">
         <div class="container">
-            <h2>Why CropGuard AI?</h2>
+            <h2>Key Features</h2>
             <div class="feature-grid">
                 <div class="feature-card">
                     <i class="fas fa-brain"></i>
-                    <h3>Deep Learning</h3>
-                    <p>Trained CNN models detect plant diseases with high accuracy.</p>
+                    <h3>Deep Learning Powered</h3>
+                    <p>Advanced CNN models trained on extensive datasets to detect plant diseases with high accuracy and reliability.</p>
                 </div>
                 <div class="feature-card">
                     <i class="fas fa-clock"></i>
-                    <h3>Fast Results</h3>
-                    <p>Get diagnosis within seconds.</p>
+                    <h3>Instant Analysis</h3>
+                    <p>Get disease diagnosis within seconds. Our optimized model processes images quickly without compromising accuracy.</p>
                 </div>
                 <div class="feature-card">
                     <i class="fas fa-leaf"></i>
-                    <h3>Multiple Crops</h3>
-                    <p>Supports various crops and disease types.</p>
+                    <h3>Multiple Crop Support</h3>
+                    <p>Supports 38 different disease classes across various crops including tomatoes, potatoes, corn, and more.</p>
                 </div>
                 <div class="feature-card">
                     <i class="fas fa-chart-line"></i>
-                    <h3>Smart Reports</h3>
-                    <p>Confidence scores and prediction breakdown.</p>
+                    <h3>Detailed Reports</h3>
+                    <p>Receive comprehensive analysis with confidence scores, top predictions, and downloadable reports for record keeping.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure & Reliable</h3>
+                    <p>Thread-safe architecture ensures reliable performance even with multiple concurrent requests. Automatic file cleanup maintains system efficiency.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Responsive Design</h3>
+                    <p>Works seamlessly on desktop, tablet, and mobile devices. Access your crop analysis tools anywhere, anytime.</p>
                 </div>
             </div>
         </div>
@@ -111,20 +122,75 @@
             <div class="step-grid">
                 <div class="step">
                     <span>1</span>
-                    <h3>Upload Image</h3>
-                    <p>Select a plant leaf image.</p>
+                    <h3>Image Upload</h3>
+                    <p>Users upload a clear image of a plant leaf through our web interface. The system accepts common image formats (JPG, PNG, JPEG).</p>
                 </div>
                 <div class="step">
                     <span>2</span>
-                    <h3>AI Analysis</h3>
-                    <p>CNN model processes the image.</p>
+                    <h3>Image Preprocessing</h3>
+                    <p>The uploaded image is preprocessed: resized to 224x224 pixels, converted to RGB format, and normalized for optimal model input.</p>
                 </div>
                 <div class="step">
                     <span>3</span>
-                    <h3>Get Result</h3>
-                    <p>Disease name and confidence shown.</p>
+                    <h3>Deep Learning Analysis</h3>
+                    <p>Our trained CNN model analyzes the preprocessed image, extracting features and patterns to identify potential diseases.</p>
+                </div>
+                <div class="step">
+                    <span>4</span>
+                    <h3>Prediction & Results</h3>
+                    <p>The model generates predictions with confidence scores, showing the top 3 most likely diseases and their probabilities.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- TECHNICAL DETAILS -->
+    <section id="technical" class="technical">
+        <div class="container">
+            <h2>Technical Implementation</h2>
+            <div class="technical-grid">
+                <div class="tech-card">
+                    <i class="fas fa-code"></i>
+                    <h3>Backend Technology</h3>
+                    <ul>
+                        <li>Flask - Web framework</li>
+                        <li>TensorFlow/Keras - Deep learning</li>
+                        <li>OpenCV - Image processing</li>
+                        <li>NumPy - Numerical operations</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-network-wired"></i>
+                    <h3>Model Architecture</h3>
+                    <ul>
+                        <li>Convolutional Neural Network (CNN)</li>
+                        <li>38 disease classes supported</li>
+                        <li>224x224 input image size</li>
+                        <li>High accuracy predictions</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-server"></i>
+                    <h3>System Features</h3>
+                    <ul>
+                        <li>Thread-safe predictions</li>
+                        <li>Automatic file cleanup</li>
+                        <li>Memory optimization</li>
+                        <li>RESTful API endpoints</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section id="cta" class="cta">
+        <div class="container">
+            <h2>Ready to Analyze Your Crops?</h2>
+            <p>Upload a plant leaf image and get instant disease diagnosis</p>
+            <a href="/analyze" class="btn primary large">
+                <i class="fas fa-upload"></i> Start Analyzing Now
+            </a>
         </div>
     </section>
 

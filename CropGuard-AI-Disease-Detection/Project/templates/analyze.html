@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Analyze Image | CropGuard AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>CropGuard AI</span>
+            </div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/analyze" class="active">Analyze</a>
+                <a href="/about">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- UPLOAD -->
+    <section id="upload" class="upload">
+        <div class="container upload-box">
+            <h2>Upload Plant Image</h2>
+            <p>Upload a clear leaf image for best results</p>
+
+            <div id="uploadArea" class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Click or Drag Image</h3>
+                <p>JPG, PNG, JPEG supported</p>
+                <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+
+            <!-- Image Preview Section -->
+            <div id="previewSection" class="preview-section" style="display: none;">
+                <div class="preview-container">
+                    <img id="previewImage" src="" alt="Preview">
+                    <button class="btn remove-btn" onclick="removeImage()">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="btn primary analyze-btn" onclick="analyzeImage()">
+                <i class="fas fa-search"></i> Analyze Disease
+            </button>
+        </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results" class="results" style="display: none;">
+        <div class="container">
+            <h2>Analysis Results</h2>
+            <div class="results-grid">
+                <div class="result-image-container">
+                    <img id="resultImage" src="" alt="Analyzed Image">
+                </div>
+                <div class="result-details">
+                    <h3 id="predictionTitle">Disease Name</h3>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill"></div>
+                        <span class="confidence-text" id="confidenceText">0%</span>
+                    </div>
+                    <div class="top-predictions">
+                        <h4>Top Predictions</h4>
+                        <div id="predictionList" class="prediction-list"></div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="btn primary" onclick="resetUpload()">
+                            <i class="fas fa-redo"></i> Analyze Another
+                        </button>
+                        <button class="btn outline" onclick="downloadReport()">
+                            <i class="fas fa-download"></i> Download Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-flex">
+            <p>© 2024 CropGuard AI | Built with ❤️ using Deep Learning</p>
+        </div>
+    </footer>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h3>Analyzing Image...</h3>
+            <p>Please wait while we process your image</p>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>Error</h3>
+            <p id="errorMessage">An error occurred</p>
+            <button class="btn primary" onclick="closeModals()">Close</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

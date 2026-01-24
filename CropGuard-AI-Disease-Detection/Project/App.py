@@ -8,14 +8,15 @@ import json
 import threading
 import time
 import gc
+import uuid
 from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
 # Configuration
-UPLOAD_FOLDER = 'CropGuard-AI-Disease-Detection/Project/static/uploads'
+UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MODEL_PATH = "CropGuard-AI-Disease-Detection/Project/model.h5"
+MODEL_PATH = "model.h5"
 MAX_WORKERS = 2  # Limit concurrent predictions
 
 # Create upload folder if it doesn't exist
@@ -78,14 +79,20 @@ def predict_disease(image_path):
             return {"error": "Could not process image"}
 
         # Make prediction with thread safety
+        # Use lock to prevent concurrent predictions (TensorFlow models are not fully thread-safe)
         print(f"Starting prediction for image shape: {processed_img.shape}")
         with prediction_lock:
             try:
-                predictions = model.predict(processed_img, verbose=0)
+                # Use batch_size=1 and reduce memory usage
+                predictions = model.predict(processed_img, verbose=0, batch_size=1)
                 print(f"Prediction completed, output shape: {predictions.shape}")
             except Exception as pred_error:
                 print(f"Model prediction error: {pred_error}")
                 raise pred_error
+
+        # Clear processed image from memory
+        del processed_img
+        gc.collect()
 
         predicted_class_idx = np.argmax(predictions[0])
         confidence = float(predictions[0][predicted_class_idx])
@@ -102,6 +109,10 @@ def predict_disease(image_path):
             }
             for idx in top_3_indices
         ]
+
+        # Clear predictions from memory
+        del predictions
+        gc.collect()
 
         return {
             "prediction": predicted_class,
@@ -131,6 +142,11 @@ def home():
     """Serve the main page"""
     return render_template('index.html')
 
+@app.route('/analyze')
+def analyze():
+    """Serve the analysis page"""
+    return render_template('analyze.html')
+
 @app.route('/predict', methods=['POST'])
 def predict():
     """Handle image upload and prediction with thread safety"""
@@ -143,8 +159,11 @@ def predict():
 
     if file and allowed_file(file.filename):
         try:
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            # Generate unique filename with timestamp to prevent conflicts
+            original_filename = secure_filename(file.filename)
+            file_ext = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'jpg'
+            unique_filename = f"{int(time.time())}_{uuid.uuid4().hex[:8]}.{file_ext}"
+            filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
             file.save(filepath)
 
             # Clean up old files periodically (every 10 requests)
@@ -157,7 +176,7 @@ def predict():
                 cleanup_old_files()
 
             # Make prediction
-            print(f"Processing image: {filename}")
+            print(f"Processing image: {unique_filename}")
             start_time = time.time()
 
             result = predict_disease(filepath)
@@ -170,13 +189,33 @@ def predict():
 
             # Add image path to result for display
             if result.get("success"):
-                result["image_path"] = f"/{filepath}"
+                result["image_path"] = f"/static/uploads/{unique_filename}"
                 result["processing_time"] = processing_time
+
+            # Clean up the uploaded file after a short delay (to allow display)
+            # Schedule cleanup after 5 minutes
+            def delayed_cleanup(file_path):
+                time.sleep(300)  # 5 minutes
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        print(f"Cleaned up file: {file_path}")
+                except Exception as e:
+                    print(f"Error cleaning up file {file_path}: {e}")
+            
+            cleanup_thread = threading.Thread(target=delayed_cleanup, args=(filepath,), daemon=True)
+            cleanup_thread.start()
 
             return jsonify(result)
 
         except Exception as e:
-            print(f"Prediction error for {filename}: {str(e)}")
+            print(f"Prediction error for {unique_filename}: {str(e)}")
+            # Clean up file on error
+            try:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+            except:
+                pass
             return jsonify({"error": f"Prediction failed: {str(e)}", "success": False})
 
     return jsonify({"error": "File type not allowed", "success": False})
@@ -195,6 +234,12 @@ def health():
         "classes_loaded": class_names is not None,
         "num_classes": len(class_names) if class_names else 0
     })
+
+@app.route('/static/uploads/<filename>')
+def uploaded_file(filename):
+    """Serve uploaded images"""
+    from flask import send_from_directory
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 if __name__ == '__main__':
     # Clean up any leftover files on startup

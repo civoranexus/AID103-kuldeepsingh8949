@@ -67,6 +67,16 @@ function initializeFileInput() {
 
     fileInput.addEventListener('change', function(e) {
         if (e.target.files.length > 0) {
+            // Reset previous state when new file is selected
+            const resultsSection = document.getElementById('results');
+            if (resultsSection) {
+                resultsSection.style.display = 'none';
+            }
+            
+            // Clear previous selected file
+            window.selectedFile = null;
+            
+            // Handle new file
             handleFile(e.target.files[0]);
         }
     });
@@ -95,15 +105,23 @@ function showImagePreview(file) {
         const previewImage = document.getElementById('previewImage');
         const previewSection = document.getElementById('previewSection');
         const uploadArea = document.getElementById('uploadArea');
+        const analyzeBtn = document.getElementById('analyzeBtn');
 
-        previewImage.src = e.target.result;
+        if (previewImage && previewSection && uploadArea) {
+            previewImage.src = e.target.result;
 
-        // Hide upload area and show preview
-        uploadArea.style.display = 'none';
-        previewSection.style.display = 'flex';
+            // Hide upload area and show preview
+            uploadArea.style.display = 'none';
+            previewSection.style.display = 'block';
 
-        // Store file for later use
-        window.selectedFile = file;
+            // Enable analyze button
+            if (analyzeBtn) {
+                analyzeBtn.style.display = 'block';
+            }
+
+            // Store file for later use
+            window.selectedFile = file;
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -112,23 +130,46 @@ function removeImage() {
     const previewSection = document.getElementById('previewSection');
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resultsSection = document.getElementById('results');
 
     // Hide preview and show upload area
-    previewSection.style.display = 'none';
-    uploadArea.style.display = 'block';
+    if (previewSection) previewSection.style.display = 'none';
+    if (uploadArea) uploadArea.style.display = 'block';
+    
+    // Show upload section if it was hidden
+    const uploadSection = document.getElementById('upload');
+    if (uploadSection) {
+        uploadSection.style.display = 'block';
+    }
 
     // Clear file input
-    fileInput.value = '';
+    if (fileInput) fileInput.value = '';
     window.selectedFile = null;
 
     // Hide results if visible
-    hideResults();
+    if (resultsSection) {
+        resultsSection.style.display = 'none';
+    }
+    
+    // Reset button state
+    if (analyzeBtn) {
+        analyzeBtn.disabled = false;
+        analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+    }
 }
 
 function analyzeImage() {
     if (!window.selectedFile) {
         showError('Please select an image first');
         return;
+    }
+
+    // Disable analyze button to prevent multiple simultaneous requests
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    if (analyzeBtn) {
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
     }
 
     // Show loading modal
@@ -157,6 +198,12 @@ function analyzeImage() {
     })
     .then(data => {
         hideLoadingModal();
+        
+        // Re-enable analyze button
+        if (analyzeBtn) {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+        }
 
         if (data.success) {
             showResults(data);
@@ -167,6 +214,12 @@ function analyzeImage() {
     .catch(error => {
         clearTimeout(timeoutId);
         hideLoadingModal();
+        
+        // Re-enable analyze button on error
+        if (analyzeBtn) {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+        }
 
         if (error.name === 'AbortError') {
             showError('Request timed out. The server might be busy. Please try again.');
@@ -178,47 +231,64 @@ function analyzeImage() {
 }
 
 function showResults(data) {
-    // Update result image
+    // Update result image - use server path if available, otherwise use preview
     const resultImage = document.getElementById('resultImage');
-    resultImage.src = document.getElementById('previewImage').src;
+    const previewImage = document.getElementById('previewImage');
+    
+    if (resultImage) {
+        if (data.image_path) {
+            resultImage.src = data.image_path;
+        } else if (previewImage && previewImage.src) {
+            resultImage.src = previewImage.src;
+        }
+    }
 
     // Update main prediction
     const predictionTitle = document.getElementById('predictionTitle');
-    predictionTitle.textContent = data.prediction;
+    if (predictionTitle) {
+        predictionTitle.textContent = data.prediction || 'Unknown';
+    }
 
     // Update confidence bar
     const confidenceFill = document.getElementById('confidenceFill');
     const confidenceText = document.getElementById('confidenceText');
-    const confidencePercent = Math.round(data.confidence * 100);
-
-    confidenceFill.style.width = confidencePercent + '%';
-    confidenceText.textContent = confidencePercent + '%';
+    if (confidenceFill && confidenceText) {
+        const confidencePercent = Math.round((data.confidence || 0) * 100);
+        confidenceFill.style.width = confidencePercent + '%';
+        confidenceText.textContent = confidencePercent + '%';
+    }
 
     // Update top predictions
     const predictionList = document.getElementById('predictionList');
-    predictionList.innerHTML = '';
+    if (predictionList) {
+        predictionList.innerHTML = '';
 
-    data.top_3_predictions.forEach(prediction => {
-        const predictionItem = document.createElement('div');
-        predictionItem.className = 'prediction-item';
+        if (data.top_3_predictions && Array.isArray(data.top_3_predictions)) {
+            data.top_3_predictions.forEach(prediction => {
+                const predictionItem = document.createElement('div');
+                predictionItem.className = 'prediction-item';
 
-        predictionItem.innerHTML = `
-            <span class="prediction-name">${prediction.class}</span>
-            <span class="prediction-confidence">${Math.round(prediction.confidence * 100)}%</span>
-        `;
+                predictionItem.innerHTML = `
+                    <span class="prediction-name">${prediction.class || 'Unknown'}</span>
+                    <span class="prediction-confidence">${Math.round((prediction.confidence || 0) * 100)}%</span>
+                `;
 
-        predictionList.appendChild(predictionItem);
-    });
+                predictionList.appendChild(predictionItem);
+            });
+        }
+    }
 
     // Show results section
     const resultsSection = document.getElementById('results');
-    resultsSection.style.display = 'block';
+    if (resultsSection) {
+        resultsSection.style.display = 'block';
+        // Scroll to results
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
 
-    // Scroll to results
-    resultsSection.scrollIntoView({ behavior: 'smooth' });
-
-    // Hide upload section
-    document.getElementById('upload').style.display = 'none';
+    // Keep upload section visible but show results
+    // Don't hide upload section - allow users to analyze another image
+    // The "Analyze Another" button will handle resetting
 }
 
 function hideResults() {
@@ -228,9 +298,52 @@ function hideResults() {
 }
 
 function resetUpload() {
-    removeImage();
+    // Reset all UI elements
+    const uploadSection = document.getElementById('upload');
+    const resultsSection = document.getElementById('results');
+    const previewSection = document.getElementById('previewSection');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    
+    // Show upload section
+    if (uploadSection) {
+        uploadSection.style.display = 'block';
+    }
+    
+    // Hide results
+    if (resultsSection) {
+        resultsSection.style.display = 'none';
+    }
+    
+    // Reset preview
+    if (previewSection) {
+        previewSection.style.display = 'none';
+    }
+    
+    // Show upload area
+    if (uploadArea) {
+        uploadArea.style.display = 'block';
+    }
+    
+    // Clear file input
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    
+    // Reset button state
+    if (analyzeBtn) {
+        analyzeBtn.disabled = false;
+        analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+    }
+    
+    // Clear selected file
+    window.selectedFile = null;
+    
     // Scroll back to upload section
-    document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
+    if (uploadSection) {
+        uploadSection.scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function downloadReport() {
