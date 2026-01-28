@@ -13,6 +13,33 @@ from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
+# Company profile (Civora Nexus)
+COMPANY_PROFILE = {
+    "name": "Civora Nexus",
+    "tagline": "A premier internship platform connecting talented students with leading companies across various domains.",
+    "mission": "We believe in fostering innovation, nurturing talent, and creating opportunities that shape the future of technology and business.",
+    "logo_path": "/Users/mac/Developer/CivoraX.png",
+    "contact": {
+        "email": "internships@civoranexus.com",
+        "phone": "+91 7350 675192",
+        "location": "Sangamner, Maharashtra, India",
+    },
+    "highlights": [
+        {
+            "title": "Industry-Ready Skills",
+            "description": "Work on real-world projects with experienced mentors",
+        },
+        {
+            "title": "Competitive Environment",
+            "description": "Track your progress and compete with peers",
+        },
+        {
+            "title": "Career Opportunities",
+            "description": "Direct path to full-time positions with top companies",
+        },
+    ],
+}
+
 # Configuration
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -136,16 +163,40 @@ def cleanup_old_files():
                 print(f"Cleaned up old file: {filename}")
     except Exception as e:
         print(f"Error during cleanup: {e}")
-# Flask Routes
+ # Flask Routes
 @app.route('/')
 def home():
-    """Serve the main page"""
-    return render_template('index.html')
+    """Company website home page (Civora Nexus)."""
+    return render_template('index.html', company=COMPANY_PROFILE)
 
-@app.route('/analyze')
-def analyze():
-    """Serve the analysis page"""
-    return render_template('analyze.html')
+@app.route('/internships')
+def internships():
+    """Internships page."""
+    return render_template('internships.html', company=COMPANY_PROFILE)
+
+@app.route('/companies')
+def companies():
+    """For Companies page."""
+    return render_template('companies.html', company=COMPANY_PROFILE)
+
+@app.route('/contact')
+def contact():
+    """Contact page."""
+    return render_template('contact.html', company=COMPANY_PROFILE)
+
+@app.route('/api/company-profile')
+def company_profile():
+    """Return Civora Nexus company profile (JSON)."""
+    return jsonify(COMPANY_PROFILE)
+
+@app.route('/company-logo')
+def company_logo():
+    """Serve Civora Nexus logo from configured path."""
+    from flask import send_file
+    logo_path = COMPANY_PROFILE.get("logo_path")
+    if not logo_path or not os.path.exists(logo_path):
+        return jsonify({"error": "Company logo not found"}), 404
+    return send_file(logo_path)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -222,8 +273,8 @@ def predict():
 
 @app.route('/about')
 def about():
-    """Serve the about page"""
-    return render_template('about.html')
+    """About page."""
+    return render_template('about.html', company=COMPANY_PROFILE)
 
 @app.route('/health')
 def health():

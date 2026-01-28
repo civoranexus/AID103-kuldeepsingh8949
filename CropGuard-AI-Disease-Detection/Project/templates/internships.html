@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Internships | {{ company.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                <span>{{ company.name }}</span>
+            </div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/internships" class="active">Internships</a>
+                <a href="/companies">For Companies</a>
+                <a href="/contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="overview">
+        <div class="container">
+            <h2>Internships</h2>
+            <div class="overview-content">
+                <div class="overview-text">
+                    <p>Explore internship opportunities across multiple domains. Build industry-ready skills through real-world projects and mentor support.</p>
+                    <div class="technical-grid">
+                        <div class="tech-card">
+                            <i class="fas fa-laptop-code"></i>
+                            <h3>Tech Domains</h3>
+                            <ul>
+                                <li>Web Development</li>
+                                <li>Data Science</li>
+                                <li>AI / Machine Learning</li>
+                                <li>Cloud & DevOps</li>
+                            </ul>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fas fa-briefcase"></i>
+                            <h3>Business Domains</h3>
+                            <ul>
+                                <li>Business Development</li>
+                                <li>Marketing</li>
+                                <li>Operations</li>
+                                <li>Product</li>
+                            </ul>
+                        </div>
+                        <div class="tech-card">
+                            <i class="fas fa-bullseye"></i>
+                            <h3>What You Get</h3>
+                            <ul>
+                                <li>Mentor feedback</li>
+                                <li>Progress tracking</li>
+                                <li>Competitive environment</li>
+                                <li>Career opportunities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Apply?</h2>
+            <p>Contact us to get started with the next batch.</p>
+            <a href="/contact" class="btn primary large"><i class="fas fa-paper-plane"></i> Contact Us</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-flex">
+            <p>© 2024 {{ company.name }} | {{ company.contact.email }} | {{ company.contact.phone }} | {{ company.contact.location }}</p>
+        </div>
+    </footer>
+</body>
+
+</html>

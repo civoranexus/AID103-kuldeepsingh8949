@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - CropGuard AI</title>
+    <title>About - {{ company.name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,14 +15,15 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <i class="fas fa-leaf"></i>
-                <span>CropGuard AI</span>
+                <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                <span>{{ company.name }}</span>
             </div>
             <div class="nav-menu">
                 <a href="/" class="nav-link">Home</a>
-                <a href="#mission" class="nav-link">Mission</a>
-                <a href="#technology" class="nav-link">Technology</a>
-                <a href="#team" class="nav-link">Team</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/internships" class="nav-link">Internships</a>
+                <a href="/companies" class="nav-link">For Companies</a>
+                <a href="/contact" class="nav-link">Contact</a>
             </div>
         </div>
     </nav>
@@ -32,56 +33,47 @@
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    About <span class="highlight">CropGuard AI</span>
+                    About <span class="highlight">{{ company.name }}</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Revolutionizing agriculture through artificial intelligence to protect crops and ensure food security worldwide.
+                    {{ company.tagline }}
                 </p>
             </div>
             <div class="hero-image">
                 <div class="image-placeholder">
-                    <i class="fas fa-microchip"></i>
-                    <p>AI Innovation</p>
+                    <i class="fas fa-briefcase"></i>
+                    <p>Internship Platform</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Mission Section -->
-    <section id="mission" class="mission-section">
+    <section class="mission-section">
         <div class="container">
             <div class="section-header">
                 <h2>Our Mission</h2>
-                <p>Empowering farmers with cutting-edge technology</p>
+                <p>Fostering innovation and creating opportunities</p>
             </div>
 
             <div class="mission-content">
                 <div class="mission-text">
-                    <h3>Protecting Global Agriculture</h3>
-                    <p>
-                        CropGuard AI was founded with a singular mission: to leverage artificial intelligence
-                        to combat plant diseases that threaten global food security. Every year, plant diseases
-                        cause billions of dollars in crop losses and affect millions of farmers worldwide.
-                    </p>
-                    <p>
-                        Our platform provides farmers, agricultural professionals, and researchers with
-                        instant, accurate disease diagnosis using state-of-the-art deep learning technology.
-                        By making advanced AI accessible and affordable, we're helping create a more
-                        sustainable and productive agricultural future.
-                    </p>
+                    <h3>Building Careers Through Experience</h3>
+                    <p>{{ company.mission }}</p>
+                    <p>We connect students with leading companies and help them build industry-ready skills through real-world projects and mentorship.</p>
                 </div>
                 <div class="mission-stats">
                     <div class="stat-card">
-                        <div class="stat-number">90%</div>
-                        <div class="stat-label">Accuracy Rate</div>
+                        <div class="stat-number">Mentors</div>
+                        <div class="stat-label">Guided learning</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">38</div>
-                        <div class="stat-label">Plant Diseases</div>
+                        <div class="stat-number">Projects</div>
+                        <div class="stat-label">Real deliverables</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label">Available</div>
+                        <div class="stat-number">Careers</div>
+                        <div class="stat-label">Opportunity pipeline</div>
                     </div>
                 </div>
             </div>
@@ -89,67 +81,33 @@
     </section>
 
     <!-- Technology Section -->
-    <section id="technology" class="technology-section">
+    <section class="technology-section">
         <div class="container">
             <div class="section-header">
-                <h2>Our Technology</h2>
-                <p>Powered by advanced AI and machine learning</p>
+                <h2>What We Offer</h2>
+                <p>Programs designed to make you industry-ready</p>
             </div>
 
             <div class="tech-grid">
+                {% for item in company.highlights %}
                 <div class="tech-card">
                     <div class="tech-icon">
-                        <i class="fas fa-brain"></i>
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <h3>Deep Learning Models</h3>
-                    <p>
-                        Our AI models are trained on extensive datasets of plant images, enabling
-                        accurate identification of diseases across multiple plant species and growth stages.
-                    </p>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description }}</p>
                 </div>
-
-                <div class="tech-card">
-                    <div class="tech-icon">
-                        <i class="fas fa-database"></i>
-                    </div>
-                    <h3>Comprehensive Dataset</h3>
-                    <p>
-                        Built on the PlantVillage dataset and continuously updated with new disease
-                        patterns and crop varieties to maintain accuracy and relevance.
-                    </p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h3>Cloud Processing</h3>
-                    <p>
-                        Fast, secure image processing in the cloud ensures reliable performance
-                        and instant results regardless of device capabilities.
-                    </p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Data Privacy</h3>
-                    <p>
-                        Your uploaded images are processed securely and not stored permanently,
-                        ensuring complete privacy and data protection.
-                    </p>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
 
     <!-- Team Section -->
-    <section id="team" class="team-section">
+    <section class="team-section">
         <div class="container">
             <div class="section-header">
                 <h2>Our Team</h2>
-                <p>Experts in AI, agriculture, and technology</p>
+                <p>Mentors and builders supporting your growth</p>
             </div>
 
             <div class="team-grid">
@@ -157,27 +115,27 @@
                     <div class="member-avatar">
                         <i class="fas fa-user"></i>
                     </div>
-                    <h3>AI Researchers</h3>
-                    <p>PhD-level experts in computer vision and deep learning</p>
-                    <div class="member-role">Machine Learning Team</div>
+                    <h3>Mentors</h3>
+                    <p>Experienced mentors guiding real-world projects</p>
+                    <div class="member-role">Mentorship</div>
                 </div>
 
                 <div class="team-member">
                     <div class="member-avatar">
                         <i class="fas fa-user-tie"></i>
                     </div>
-                    <h3>Agricultural Scientists</h3>
-                    <p>Plant pathologists and crop specialists with decades of experience</p>
-                    <div class="member-role">Domain Experts</div>
+                    <h3>Industry Experts</h3>
+                    <p>Professionals from leading companies</p>
+                    <div class="member-role">Industry</div>
                 </div>
 
                 <div class="team-member">
                     <div class="member-avatar">
                         <i class="fas fa-code"></i>
                     </div>
-                    <h3>Software Engineers</h3>
-                    <p>Full-stack developers specializing in AI applications</p>
-                    <div class="member-role">Development Team</div>
+                    <h3>Platform Team</h3>
+                    <p>Engineers building a smooth internship experience</p>
+                    <div class="member-role">Product & Engineering</div>
                 </div>
             </div>
         </div>
@@ -188,20 +146,51 @@
         <div class="container">
             <div class="contact-content">
                 <h2>Get In Touch</h2>
-                <p>Have questions about CropGuard AI or need support?</p>
+                <p>Have questions or want to partner with us?</p>
                 <div class="contact-info">
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
-                        <span>support@cropguard.ai</span>
+                        <span>{{ company.contact.email }}</span>
                     </div>
                     <div class="contact-item">
-                        <i class="fas fa-globe"></i>
-                        <span>www.cropguard.ai</span>
+                        <i class="fas fa-phone"></i>
+                        <span>{{ company.contact.phone }}</span>
                     </div>
                 </div>
-                <a href="/" class="btn btn-primary">
-                    <i class="fas fa-arrow-left"></i> Back to Home
-                </a>
+                <a href="/contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Profile -->
+    <section class="company">
+        <div class="container">
+            <h2>Company Profile</h2>
+            <div class="company-card">
+                <div class="company-header">
+                    <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                    <div>
+                        <h3>{{ company.name }}</h3>
+                        <p class="company-tagline">{{ company.tagline }}</p>
+                    </div>
+                </div>
+                <p class="company-mission">{{ company.mission }}</p>
+
+                <div class="company-highlights">
+                    {% for item in company.highlights %}
+                    <div class="company-highlight">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="company-contact">
+                    <h4>Contact Us</h4>
+                    <p><strong>Email:</strong> {{ company.contact.email }}</p>
+                    <p><strong>Phone:</strong> {{ company.contact.phone }}</p>
+                    <p><strong>Location:</strong> {{ company.contact.location }}</p>
+                </div>
             </div>
         </div>
     </section>
@@ -211,22 +200,23 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <i class="fas fa-leaf"></i>
-                    <span>CropGuard AI</span>
-                    <p>Protecting crops with artificial intelligence</p>
+                    <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                    <span>{{ company.name }}</span>
+                    <p>{{ company.tagline }}</p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-section">
                         <h4>Quick Links</h4>
                         <a href="/">Home</a>
-                        <a href="#mission">Mission</a>
-                        <a href="#technology">Technology</a>
-                        <a href="#team">Team</a>
+                        <a href="/about">About</a>
+                        <a href="/internships">Internships</a>
+                        <a href="/companies">For Companies</a>
+                        <a href="/contact">Contact</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 CropGuard AI. All rights reserved.</p>
+                <p>&copy; 2024 {{ company.name }}. All rights reserved.</p>
             </div>
         </div>
     </footer>

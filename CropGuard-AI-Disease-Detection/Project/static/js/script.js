@@ -21,6 +21,11 @@ function initializeDragDrop() {
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
 
+    // This site has multiple pages; only initialize drag-drop if upload UI exists
+    if (!uploadArea || !fileInput) {
+        return;
+    }
+
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         uploadArea.addEventListener(eventName, preventDefaults, false);
@@ -64,6 +69,10 @@ function initializeDragDrop() {
 
 function initializeFileInput() {
     const fileInput = document.getElementById('fileInput');
+
+    if (!fileInput) {
+        return;
+    }
 
     fileInput.addEventListener('change', function(e) {
         if (e.target.files.length > 0) {
@@ -421,11 +430,13 @@ function initializeSmoothScrolling() {
 }
 
 function scrollToUpload() {
-    document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById('upload');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
 function scrollToFeatures() {
-    document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById('features');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
 function initializeAnimations() {

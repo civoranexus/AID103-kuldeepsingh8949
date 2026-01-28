@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>CropGuard AI | Smart Plant Disease Detection</title>
+    <title>{{ company.name }} | Internship Platform</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Fonts & Icons -->
@@ -20,13 +20,15 @@
     <header class="navbar">
         <div class="container nav-flex">
             <div class="logo">
-                <i class="fas fa-leaf"></i>
-                <span>CropGuard AI</span>
+                <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                <span>{{ company.name }}</span>
             </div>
             <nav>
                 <a href="/" class="active">Home</a>
-                <a href="/analyze">Analyze</a>
                 <a href="/about">About</a>
+                <a href="/internships">Internships</a>
+                <a href="/companies">For Companies</a>
+                <a href="/contact">Contact</a>
             </nav>
         </div>
     </header>
@@ -35,17 +37,13 @@
     <section id="home" class="hero">
         <div class="container hero-grid">
             <div class="hero-text">
-                <h1>AI-Powered <span>Crop Disease Detection</span></h1>
-                <p>
-                    Upload a plant leaf image and get instant disease diagnosis using deep learning and computer vision.
-                </p>
+                <h1>{{ company.name }} <span>Internship Platform</span></h1>
+                <p>{{ company.tagline }}</p>
                 <div class="hero-actions">
-                    <a href="/analyze" class="btn primary">
-                        <i class="fas fa-upload"></i> Start Analysis
+                    <a href="/internships" class="btn primary">
+                        <i class="fas fa-briefcase"></i> Explore Internships
                     </a>
-                    <button class="btn outline" onclick="scrollToFeatures()">
-                        Learn More
-                    </button>
+                    <a href="/companies" class="btn outline">For Companies</a>
                 </div>
             </div>
 
@@ -58,19 +56,11 @@
     <!-- PROJECT OVERVIEW -->
     <section id="overview" class="overview">
         <div class="container">
-            <h2>About CropGuard AI</h2>
+            <h2>About {{ company.name }}</h2>
             <div class="overview-content">
                 <div class="overview-text">
-                    <p>
-                        CropGuard AI is an advanced plant disease detection system powered by deep learning and computer vision. 
-                        Our platform helps farmers and agricultural professionals quickly identify plant diseases by analyzing 
-                        leaf images with state-of-the-art convolutional neural networks (CNNs).
-                    </p>
-                    <p>
-                        The system is trained on a comprehensive dataset of plant diseases and can identify various crop diseases 
-                        with high accuracy, providing instant diagnosis and confidence scores to help users make informed decisions 
-                        about crop management.
-                    </p>
+                    <p>{{ company.mission }}</p>
+                    <p>We connect talented students with leading companies across multiple domains, enabling career growth through real-world experience.</p>
                 </div>
             </div>
         </div>
@@ -79,37 +69,24 @@
     <!-- FEATURES -->
     <section id="features" class="features">
         <div class="container">
-            <h2>Key Features</h2>
+            <h2>Why {{ company.name }}?</h2>
             <div class="feature-grid">
+                {% for item in company.highlights %}
                 <div class="feature-card">
-                    <i class="fas fa-brain"></i>
-                    <h3>Deep Learning Powered</h3>
-                    <p>Advanced CNN models trained on extensive datasets to detect plant diseases with high accuracy and reliability.</p>
+                    <i class="fas fa-check-circle"></i>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description }}</p>
+                </div>
+                {% endfor %}
+                <div class="feature-card">
+                    <i class="fas fa-handshake"></i>
+                    <h3>Trusted Partnerships</h3>
+                    <p>Connecting students with leading companies across various domains.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-clock"></i>
-                    <h3>Instant Analysis</h3>
-                    <p>Get disease diagnosis within seconds. Our optimized model processes images quickly without compromising accuracy.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-leaf"></i>
-                    <h3>Multiple Crop Support</h3>
-                    <p>Supports 38 different disease classes across various crops including tomatoes, potatoes, corn, and more.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Detailed Reports</h3>
-                    <p>Receive comprehensive analysis with confidence scores, top predictions, and downloadable reports for record keeping.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Secure & Reliable</h3>
-                    <p>Thread-safe architecture ensures reliable performance even with multiple concurrent requests. Automatic file cleanup maintains system efficiency.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-mobile-alt"></i>
-                    <h3>Responsive Design</h3>
-                    <p>Works seamlessly on desktop, tablet, and mobile devices. Access your crop analysis tools anywhere, anytime.</p>
+                    <i class="fas fa-route"></i>
+                    <h3>Clear Career Path</h3>
+                    <p>Structured programs designed to move you from learning to landing opportunities.</p>
                 </div>
             </div>
         </div>
@@ -122,23 +99,23 @@
             <div class="step-grid">
                 <div class="step">
                     <span>1</span>
-                    <h3>Image Upload</h3>
-                    <p>Users upload a clear image of a plant leaf through our web interface. The system accepts common image formats (JPG, PNG, JPEG).</p>
+                    <h3>Create Your Profile</h3>
+                    <p>Tell us your goals, skills, and preferred domains to get matched faster.</p>
                 </div>
                 <div class="step">
                     <span>2</span>
-                    <h3>Image Preprocessing</h3>
-                    <p>The uploaded image is preprocessed: resized to 224x224 pixels, converted to RGB format, and normalized for optimal model input.</p>
+                    <h3>Choose a Track</h3>
+                    <p>Select internship tracks aligned with industry-ready skills and real projects.</p>
                 </div>
                 <div class="step">
                     <span>3</span>
-                    <h3>Deep Learning Analysis</h3>
-                    <p>Our trained CNN model analyzes the preprocessed image, extracting features and patterns to identify potential diseases.</p>
+                    <h3>Build With Mentors</h3>
+                    <p>Work on real-world projects with mentor feedback and progress tracking.</p>
                 </div>
                 <div class="step">
                     <span>4</span>
-                    <h3>Prediction & Results</h3>
-                    <p>The model generates predictions with confidence scores, showing the top 3 most likely diseases and their probabilities.</p>
+                    <h3>Unlock Opportunities</h3>
+                    <p>Showcase your work and move toward career opportunities with partner companies.</p>
                 </div>
             </div>
         </div>
@@ -147,37 +124,70 @@
     <!-- TECHNICAL DETAILS -->
     <section id="technical" class="technical">
         <div class="container">
-            <h2>Technical Implementation</h2>
+            <h2>Platform Benefits</h2>
             <div class="technical-grid">
                 <div class="tech-card">
                     <i class="fas fa-code"></i>
-                    <h3>Backend Technology</h3>
+                    <h3>Students</h3>
                     <ul>
-                        <li>Flask - Web framework</li>
-                        <li>TensorFlow/Keras - Deep learning</li>
-                        <li>OpenCV - Image processing</li>
-                        <li>NumPy - Numerical operations</li>
+                        <li>Industry-ready skills through real projects</li>
+                        <li>Mentor guidance and structured learning</li>
+                        <li>Progress tracking and peer competition</li>
+                        <li>Career opportunities with top companies</li>
                     </ul>
                 </div>
                 <div class="tech-card">
                     <i class="fas fa-network-wired"></i>
-                    <h3>Model Architecture</h3>
+                    <h3>Companies</h3>
                     <ul>
-                        <li>Convolutional Neural Network (CNN)</li>
-                        <li>38 disease classes supported</li>
-                        <li>224x224 input image size</li>
-                        <li>High accuracy predictions</li>
+                        <li>Access to verified talent pipeline</li>
+                        <li>Project-based evaluation</li>
+                        <li>Faster hiring decisions</li>
+                        <li>Intern-to-full-time conversion support</li>
                     </ul>
                 </div>
                 <div class="tech-card">
                     <i class="fas fa-server"></i>
-                    <h3>System Features</h3>
+                    <h3>Programs</h3>
                     <ul>
-                        <li>Thread-safe predictions</li>
-                        <li>Automatic file cleanup</li>
-                        <li>Memory optimization</li>
-                        <li>RESTful API endpoints</li>
+                        <li>Competitive environment with milestones</li>
+                        <li>Portfolio-focused outcomes</li>
+                        <li>Multiple domains and tracks</li>
+                        <li>Community and peer learning</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPANY PROFILE -->
+    <section id="company" class="company">
+        <div class="container">
+            <h2>Company Profile</h2>
+            <div class="company-card">
+                <div class="company-header">
+                    <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                    <div>
+                        <h3>{{ company.name }}</h3>
+                        <p class="company-tagline">{{ company.tagline }}</p>
+                    </div>
+                </div>
+                <p class="company-mission">{{ company.mission }}</p>
+
+                <div class="company-highlights">
+                    {% for item in company.highlights %}
+                    <div class="company-highlight">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="company-contact">
+                    <h4>Contact Us</h4>
+                    <p><strong>Email:</strong> {{ company.contact.email }}</p>
+                    <p><strong>Phone:</strong> {{ company.contact.phone }}</p>
+                    <p><strong>Location:</strong> {{ company.contact.location }}</p>
                 </div>
             </div>
         </div>
@@ -186,10 +196,10 @@
     <!-- CALL TO ACTION -->
     <section id="cta" class="cta">
         <div class="container">
-            <h2>Ready to Analyze Your Crops?</h2>
-            <p>Upload a plant leaf image and get instant disease diagnosis</p>
-            <a href="/analyze" class="btn primary large">
-                <i class="fas fa-upload"></i> Start Analyzing Now
+            <h2>Ready to Start Your Journey?</h2>
+            <p>Join {{ company.name }} and get matched with real opportunities</p>
+            <a href="/internships" class="btn primary large">
+                <i class="fas fa-rocket"></i> Get Started
             </a>
         </div>
     </section>
@@ -197,7 +207,7 @@
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container footer-flex">
-            <p>© 2024 CropGuard AI | Built with ❤️ using Deep Learning</p>
+            <p>© 2024 {{ company.name }} | {{ company.contact.email }} | {{ company.contact.phone }} | {{ company.contact.location }}</p>
         </div>
     </footer>
 
