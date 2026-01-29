@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ company.name }} | Internship Platform</title>
+    <title>{{ company.name }} | AI Crop Disease Detection</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Fonts & Icons -->
@@ -20,14 +20,13 @@
     <header class="navbar">
         <div class="container nav-flex">
             <div class="logo">
-                <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                <i class="fas fa-leaf"></i>
                 <span>{{ company.name }}</span>
             </div>
             <nav>
                 <a href="/" class="active">Home</a>
+                <a href="/analyze">Analyze Disease</a>
                 <a href="/about">About</a>
-                <a href="/internships">Internships</a>
-                <a href="/companies">For Companies</a>
                 <a href="/contact">Contact</a>
             </nav>
         </div>
@@ -37,13 +36,13 @@
     <section id="home" class="hero">
         <div class="container hero-grid">
             <div class="hero-text">
-                <h1>{{ company.name }} <span>Internship Platform</span></h1>
+                <h1>{{ company.name }}</h1>
                 <p>{{ company.tagline }}</p>
                 <div class="hero-actions">
-                    <a href="/internships" class="btn primary">
-                        <i class="fas fa-briefcase"></i> Explore Internships
+                    <a href="/analyze" class="btn primary">
+                        <i class="fas fa-search"></i> Analyze Your Crops
                     </a>
-                    <a href="/companies" class="btn outline">For Companies</a>
+                    <a href="/about" class="btn outline">Learn More</a>
                 </div>
             </div>
 
@@ -53,14 +52,14 @@
         </div>
     </section>
 
-    <!-- PROJECT OVERVIEW -->
+    <!-- SERVICE OVERVIEW -->
     <section id="overview" class="overview">
         <div class="container">
             <h2>About {{ company.name }}</h2>
             <div class="overview-content">
                 <div class="overview-text">
                     <p>{{ company.mission }}</p>
-                    <p>We connect talented students with leading companies across multiple domains, enabling career growth through real-world experience.</p>
+                    <p>Our AI-powered platform uses advanced deep learning technology to identify crop diseases from leaf images, helping farmers take timely action to protect their crops and maximize yields.</p>
                 </div>
             </div>
         </div>
@@ -69,7 +68,7 @@
     <!-- FEATURES -->
     <section id="features" class="features">
         <div class="container">
-            <h2>Why {{ company.name }}?</h2>
+            <h2>Why Choose {{ company.name }}?</h2>
             <div class="feature-grid">
                 {% for item in company.highlights %}
                 <div class="feature-card">
@@ -79,14 +78,14 @@
                 </div>
                 {% endfor %}
                 <div class="feature-card">
-                    <i class="fas fa-handshake"></i>
-                    <h3>Trusted Partnerships</h3>
-                    <p>Connecting students with leading companies across various domains.</p>
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Reliable Results</h3>
+                    <p>Trained on extensive datasets with high accuracy for confident decision making.</p>
                 </div>
                 <div class="feature-card">
-                    <i class="fas fa-route"></i>
-                    <h3>Clear Career Path</h3>
-                    <p>Structured programs designed to move you from learning to landing opportunities.</p>
+                    <i class="fas fa-globe"></i>
+                    <h3>Global Access</h3>
+                    <p>Available worldwide to support farmers in every region and climate.</p>
                 </div>
             </div>
         </div>
@@ -99,23 +98,23 @@
             <div class="step-grid">
                 <div class="step">
                     <span>1</span>
-                    <h3>Create Your Profile</h3>
-                    <p>Tell us your goals, skills, and preferred domains to get matched faster.</p>
+                    <h3>Capture Image</h3>
+                    <p>Take a clear photo of your plant leaf showing any symptoms or discoloration.</p>
                 </div>
                 <div class="step">
                     <span>2</span>
-                    <h3>Choose a Track</h3>
-                    <p>Select internship tracks aligned with industry-ready skills and real projects.</p>
+                    <h3>Upload & Analyze</h3>
+                    <p>Upload your image to our platform and let our AI analyze it instantly.</p>
                 </div>
                 <div class="step">
                     <span>3</span>
-                    <h3>Build With Mentors</h3>
-                    <p>Work on real-world projects with mentor feedback and progress tracking.</p>
+                    <h3>Get Results</h3>
+                    <p>Receive detailed analysis with disease identification and confidence levels.</p>
                 </div>
                 <div class="step">
                     <span>4</span>
-                    <h3>Unlock Opportunities</h3>
-                    <p>Showcase your work and move toward career opportunities with partner companies.</p>
+                    <h3>Take Action</h3>
+                    <p>Use the insights to apply appropriate treatment and protect your crops.</p>
                 </div>
             </div>
         </div>
@@ -124,36 +123,36 @@
     <!-- TECHNICAL DETAILS -->
     <section id="technical" class="technical">
         <div class="container">
-            <h2>Platform Benefits</h2>
+            <h2>AI Technology & Benefits</h2>
             <div class="technical-grid">
                 <div class="tech-card">
-                    <i class="fas fa-code"></i>
-                    <h3>Students</h3>
+                    <i class="fas fa-brain"></i>
+                    <h3>Advanced AI</h3>
                     <ul>
-                        <li>Industry-ready skills through real projects</li>
-                        <li>Mentor guidance and structured learning</li>
-                        <li>Progress tracking and peer competition</li>
-                        <li>Career opportunities with top companies</li>
+                        <li>Deep learning neural networks</li>
+                        <li>Trained on 38+ plant disease types</li>
+                        <li>High accuracy disease identification</li>
+                        <li>Continuous model improvement</li>
                     </ul>
                 </div>
                 <div class="tech-card">
-                    <i class="fas fa-network-wired"></i>
-                    <h3>Companies</h3>
+                    <i class="fas fa-rocket"></i>
+                    <h3>Performance</h3>
                     <ul>
-                        <li>Access to verified talent pipeline</li>
-                        <li>Project-based evaluation</li>
-                        <li>Faster hiring decisions</li>
-                        <li>Intern-to-full-time conversion support</li>
+                        <li>Instant analysis in seconds</li>
+                        <li>Optimized for mobile devices</li>
+                        <li>Batch processing capabilities</li>
+                        <li>99.9% uptime reliability</li>
                     </ul>
                 </div>
                 <div class="tech-card">
-                    <i class="fas fa-server"></i>
-                    <h3>Programs</h3>
+                    <i class="fas fa-users"></i>
+                    <h3>For Farmers</h3>
                     <ul>
-                        <li>Competitive environment with milestones</li>
-                        <li>Portfolio-focused outcomes</li>
-                        <li>Multiple domains and tracks</li>
-                        <li>Community and peer learning</li>
+                        <li>Easy-to-use interface</li>
+                        <li>No technical expertise required</li>
+                        <li>Cost-effective disease monitoring</li>
+                        <li>Actionable treatment recommendations</li>
                     </ul>
                 </div>
             </div>
@@ -196,10 +195,10 @@
     <!-- CALL TO ACTION -->
     <section id="cta" class="cta">
         <div class="container">
-            <h2>Ready to Start Your Journey?</h2>
-            <p>Join {{ company.name }} and get matched with real opportunities</p>
-            <a href="/internships" class="btn primary large">
-                <i class="fas fa-rocket"></i> Get Started
+            <h2>Protect Your Crops Today</h2>
+            <p>Start analyzing your plant health with {{ company.name }}'s advanced AI technology</p>
+            <a href="/analyze" class="btn primary large">
+                <i class="fas fa-search"></i> Analyze Now
             </a>
         </div>
     </section>

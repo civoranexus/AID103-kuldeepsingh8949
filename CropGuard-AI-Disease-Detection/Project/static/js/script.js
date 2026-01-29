@@ -1,30 +1,20 @@
-// CropGuard AI Frontend JavaScript
+// ===== BASIC CROPGUARD AI FRONTEND =====
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
 function initializeApp() {
-    // Initialize drag and drop functionality
     initializeDragDrop();
-
-    // Initialize file input
     initializeFileInput();
-
-    // Initialize smooth scrolling
     initializeSmoothScrolling();
-
-    // Initialize animations
-    initializeAnimations();
 }
 
+// ===== DRAG & DROP FUNCTIONALITY =====
 function initializeDragDrop() {
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
 
-    // This site has multiple pages; only initialize drag-drop if upload UI exists
-    if (!uploadArea || !fileInput) {
-        return;
-    }
+    if (!uploadArea || !fileInput) return;
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -32,7 +22,7 @@ function initializeDragDrop() {
         document.body.addEventListener(eventName, preventDefaults, false);
     });
 
-    // Highlight drop zone when item is dragged over it
+    // Highlight drop zone
     ['dragenter', 'dragover'].forEach(eventName => {
         uploadArea.addEventListener(eventName, highlight, false);
     });
@@ -67,25 +57,20 @@ function initializeDragDrop() {
     }
 }
 
+// ===== FILE INPUT HANDLING =====
 function initializeFileInput() {
     const fileInput = document.getElementById('fileInput');
 
-    if (!fileInput) {
-        return;
-    }
+    if (!fileInput) return;
 
     fileInput.addEventListener('change', function(e) {
         if (e.target.files.length > 0) {
-            // Reset previous state when new file is selected
+            // Hide results when new file is selected
             const resultsSection = document.getElementById('results');
             if (resultsSection) {
                 resultsSection.style.display = 'none';
             }
-            
-            // Clear previous selected file
-            window.selectedFile = null;
-            
-            // Handle new file
+
             handleFile(e.target.files[0]);
         }
     });
@@ -98,7 +83,7 @@ function handleFile(file) {
         return;
     }
 
-    // Validate file size (max 10MB)
+    // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
         showError('File size must be less than 10MB');
         return;
@@ -123,7 +108,7 @@ function showImagePreview(file) {
             uploadArea.style.display = 'none';
             previewSection.style.display = 'block';
 
-            // Enable analyze button
+            // Show analyze button
             if (analyzeBtn) {
                 analyzeBtn.style.display = 'block';
             }
@@ -135,46 +120,14 @@ function showImagePreview(file) {
     reader.readAsDataURL(file);
 }
 
-function removeImage() {
-    const previewSection = document.getElementById('previewSection');
-    const uploadArea = document.getElementById('uploadArea');
-    const fileInput = document.getElementById('fileInput');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const resultsSection = document.getElementById('results');
-
-    // Hide preview and show upload area
-    if (previewSection) previewSection.style.display = 'none';
-    if (uploadArea) uploadArea.style.display = 'block';
-    
-    // Show upload section if it was hidden
-    const uploadSection = document.getElementById('upload');
-    if (uploadSection) {
-        uploadSection.style.display = 'block';
-    }
-
-    // Clear file input
-    if (fileInput) fileInput.value = '';
-    window.selectedFile = null;
-
-    // Hide results if visible
-    if (resultsSection) {
-        resultsSection.style.display = 'none';
-    }
-    
-    // Reset button state
-    if (analyzeBtn) {
-        analyzeBtn.disabled = false;
-        analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
-    }
-}
-
+// ===== IMAGE ANALYSIS =====
 function analyzeImage() {
     if (!window.selectedFile) {
         showError('Please select an image first');
         return;
     }
 
-    // Disable analyze button to prevent multiple simultaneous requests
+    // Disable analyze button
     const analyzeBtn = document.getElementById('analyzeBtn');
     if (analyzeBtn) {
         analyzeBtn.disabled = true;
@@ -184,66 +137,67 @@ function analyzeImage() {
     // Show loading modal
     showLoadingModal();
 
-    // Create FormData for upload
+    // Create FormData
     const formData = new FormData();
     formData.append('file', window.selectedFile);
 
-    // Add timeout and better error handling
+    // Set timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-    // Send to server with timeout
+    // Send request
     fetch('/predict', {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal
-    })
-    .then(response => {
-        clearTimeout(timeoutId);
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        hideLoadingModal();
-        
-        // Re-enable analyze button
-        if (analyzeBtn) {
-            analyzeBtn.disabled = false;
-            analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
-        }
+            method: 'POST',
+            body: formData,
+            signal: controller.signal
+        })
+        .then(response => {
+            clearTimeout(timeoutId);
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            hideLoadingModal();
 
-        if (data.success) {
-            showResults(data);
-        } else {
-            showError(data.error || 'An error occurred during analysis');
-        }
-    })
-    .catch(error => {
-        clearTimeout(timeoutId);
-        hideLoadingModal();
-        
-        // Re-enable analyze button on error
-        if (analyzeBtn) {
-            analyzeBtn.disabled = false;
-            analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
-        }
+            // Re-enable analyze button
+            if (analyzeBtn) {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+            }
 
-        if (error.name === 'AbortError') {
-            showError('Request timed out. The server might be busy. Please try again.');
-        } else {
-            showError('Network error. Please check your connection and try again.');
-        }
-        console.error('Error:', error);
-    });
+            if (data.success) {
+                showResults(data);
+            } else {
+                showError(data.error || 'An error occurred during analysis');
+            }
+        })
+        .catch(error => {
+            clearTimeout(timeoutId);
+            hideLoadingModal();
+
+            // Re-enable analyze button
+            if (analyzeBtn) {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+            }
+
+            if (error.name === 'AbortError') {
+                showError('Request timed out. Please try again.');
+            } else {
+                showError('Network error. Please check your connection and try again.');
+            }
+            console.error('Error:', error);
+        });
 }
 
+// ===== RESULTS DISPLAY =====
 function showResults(data) {
-    // Update result image - use server path if available, otherwise use preview
+    // Update result image
     const resultImage = document.getElementById('resultImage');
     const previewImage = document.getElementById('previewImage');
-    
+
     if (resultImage) {
         if (data.image_path) {
             resultImage.src = data.image_path;
@@ -252,7 +206,7 @@ function showResults(data) {
         }
     }
 
-    // Update main prediction
+    // Update prediction title
     const predictionTitle = document.getElementById('predictionTitle');
     if (predictionTitle) {
         predictionTitle.textContent = data.prediction || 'Unknown';
@@ -291,72 +245,52 @@ function showResults(data) {
     const resultsSection = document.getElementById('results');
     if (resultsSection) {
         resultsSection.style.display = 'block';
-        // Scroll to results
-        resultsSection.scrollIntoView({ behavior: 'smooth' });
+        resultsSection.scrollIntoView({
+            behavior: 'smooth'
+        });
     }
-
-    // Keep upload section visible but show results
-    // Don't hide upload section - allow users to analyze another image
-    // The "Analyze Another" button will handle resetting
 }
 
-function hideResults() {
-    const resultsSection = document.getElementById('results');
-    resultsSection.style.display = 'none';
-    document.getElementById('upload').style.display = 'block';
-}
-
-function resetUpload() {
-    // Reset all UI elements
-    const uploadSection = document.getElementById('upload');
-    const resultsSection = document.getElementById('results');
+// ===== UTILITY FUNCTIONS =====
+function removeImage() {
     const previewSection = document.getElementById('previewSection');
     const uploadArea = document.getElementById('uploadArea');
     const fileInput = document.getElementById('fileInput');
     const analyzeBtn = document.getElementById('analyzeBtn');
-    
-    // Show upload section
-    if (uploadSection) {
-        uploadSection.style.display = 'block';
-    }
-    
-    // Hide results
-    if (resultsSection) {
-        resultsSection.style.display = 'none';
-    }
-    
-    // Reset preview
-    if (previewSection) {
-        previewSection.style.display = 'none';
-    }
-    
-    // Show upload area
-    if (uploadArea) {
-        uploadArea.style.display = 'block';
-    }
-    
+    const resultsSection = document.getElementById('results');
+
+    // Hide preview and show upload area
+    if (previewSection) previewSection.style.display = 'none';
+    if (uploadArea) uploadArea.style.display = 'block';
+
     // Clear file input
-    if (fileInput) {
-        fileInput.value = '';
-    }
-    
-    // Reset button state
+    if (fileInput) fileInput.value = '';
+    window.selectedFile = null;
+
+    // Hide results
+    if (resultsSection) resultsSection.style.display = 'none';
+
+    // Reset button
     if (analyzeBtn) {
         analyzeBtn.disabled = false;
         analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
+        analyzeBtn.style.display = 'none';
     }
-    
-    // Clear selected file
-    window.selectedFile = null;
-    
-    // Scroll back to upload section
+}
+
+function resetUpload() {
+    removeImage();
+
+    // Show upload section
+    const uploadSection = document.getElementById('upload');
     if (uploadSection) {
-        uploadSection.scrollIntoView({ behavior: 'smooth' });
+        uploadSection.scrollIntoView({
+            behavior: 'smooth'
+        });
     }
 }
 
 function downloadReport() {
-    // Create a simple text report
     const prediction = document.getElementById('predictionTitle').textContent;
     const confidence = document.getElementById('confidenceText').textContent;
 
@@ -379,8 +313,9 @@ ${Array.from(document.querySelectorAll('.prediction-item')).map(item => {
 Generated by CropGuard AI
     `.trim();
 
-    // Create and download file
-    const blob = new Blob([reportContent], { type: 'text/plain' });
+    const blob = new Blob([reportContent], {
+        type: 'text/plain'
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -391,199 +326,60 @@ Generated by CropGuard AI
     URL.revokeObjectURL(url);
 }
 
+// ===== MODALS =====
 function showLoadingModal() {
     const modal = document.getElementById('loadingModal');
-    modal.classList.add('show');
+    if (modal) modal.style.display = 'flex';
 }
 
 function hideLoadingModal() {
     const modal = document.getElementById('loadingModal');
-    modal.classList.remove('show');
+    if (modal) modal.style.display = 'none';
 }
 
 function showError(message) {
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
-    errorMessage.textContent = message;
-    errorModal.classList.add('show');
+    if (errorModal && errorMessage) {
+        errorMessage.textContent = message;
+        errorModal.classList.add('show');
+    } else {
+        alert(message); // Fallback if modal elements don't exist
+    }
 }
 
 function closeModals() {
-    document.getElementById('loadingModal').classList.remove('show');
-    document.getElementById('errorModal').classList.remove('show');
+    hideLoadingModal();
+    const errorModal = document.getElementById('errorModal');
+    if (errorModal) {
+        errorModal.classList.remove('show');
+    }
 }
 
+// ===== SMOOTH SCROLLING =====
 function initializeSmoothScrolling() {
-    // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
                 target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+                    behavior: 'smooth'
                 });
             }
         });
     });
 }
 
-function scrollToUpload() {
-    const el = document.getElementById('upload');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
-
-function scrollToFeatures() {
-    const el = document.getElementById('features');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-}
-
-function initializeAnimations() {
-    // Add fade-in animation to feature cards
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in-up');
-            }
-        });
-    }, observerOptions);
-
-    // Observe feature cards
-    document.querySelectorAll('.feature-card').forEach(card => {
-        observer.observe(card);
-    });
-
-    // Observe step cards
-    document.querySelectorAll('.step').forEach(step => {
-        observer.observe(step);
-    });
-}
-
-// Utility functions
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Add some visual feedback for button interactions
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('btn')) {
-        e.target.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            e.target.style.transform = '';
-        }, 150);
-    }
-});
-
-// Handle window resize for responsive adjustments
-window.addEventListener('resize', debounce(function() {
-    // Add any responsive adjustments here if needed
-}, 250));
-
-// Add keyboard navigation support
+// ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', function(e) {
-    // ESC key to close modals
+    // ESC to close modals
     if (e.key === 'Escape') {
         closeModals();
     }
 
-    // Enter key to analyze if file is selected
-    if (e.key === 'Enter' && window.selectedFile && !document.querySelector('.modal.show')) {
+    // Enter to analyze if file is selected
+    if (e.key === 'Enter' && window.selectedFile) {
         analyzeImage();
     }
 });
-
-// Add loading states to buttons
-function setButtonLoading(button, loading) {
-    if (loading) {
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        button.classList.add('loading');
-    } else {
-        button.disabled = false;
-        button.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
-        button.classList.remove('loading');
-    }
-}
-
-// Update analyze button state
-const analyzeBtn = document.getElementById('analyzeBtn');
-if (analyzeBtn) {
-    const originalAnalyzeImage = analyzeImage;
-    analyzeImage = function() {
-        setButtonLoading(analyzeBtn, true);
-        originalAnalyzeImage().finally(() => {
-            setButtonLoading(analyzeBtn, false);
-        });
-    };
-}
-
-// Add image validation feedback
-function validateImage(file) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            // Check minimum dimensions
-            if (img.width < 64 || img.height < 64) {
-                reject('Image is too small. Please use an image at least 64x64 pixels.');
-            } else if (img.width > 4096 || img.height > 4096) {
-                reject('Image is too large. Please use an image smaller than 4096x4096 pixels.');
-            } else {
-                resolve(file);
-            }
-        };
-        img.onerror = () => reject('Invalid image file.');
-        img.src = URL.createObjectURL(file);
-    });
-}
-
-// Update handleFile to include image validation
-const originalHandleFile = handleFile;
-handleFile = function(file) {
-    validateImage(file)
-        .then(validatedFile => {
-            originalHandleFile(validatedFile);
-        })
-        .catch(error => {
-            showError(error);
-        });
-};
-
-// Add browser compatibility checks
-function checkBrowserSupport() {
-    const features = {
-        'File API': typeof File !== 'undefined',
-        'FileReader API': typeof FileReader !== 'undefined',
-        'FormData': typeof FormData !== 'undefined',
-        'fetch API': typeof fetch !== 'undefined'
-    };
-
-    const unsupported = Object.entries(features)
-        .filter(([feature, supported]) => !supported)
-        .map(([feature]) => feature);
-
-    if (unsupported.length > 0) {
-        showError(`Your browser doesn't support: ${unsupported.join(', ')}. Please update your browser.`);
-        return false;
-    }
-
-    return true;
-}
-
-// Check browser support on load
-if (!checkBrowserSupport()) {
-    console.error('Browser not supported');
-}

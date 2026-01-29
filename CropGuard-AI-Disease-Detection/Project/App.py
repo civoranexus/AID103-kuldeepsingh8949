@@ -13,38 +13,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
-# Company profile (Civora Nexus)
-COMPANY_PROFILE = {
-    "name": "Civora Nexus",
-    "tagline": "A premier internship platform connecting talented students with leading companies across various domains.",
-    "mission": "We believe in fostering innovation, nurturing talent, and creating opportunities that shape the future of technology and business.",
-    "logo_path": "/Users/mac/Developer/CivoraX.png",
-    "contact": {
-        "email": "internships@civoranexus.com",
-        "phone": "+91 7350 675192",
-        "location": "Sangamner, Maharashtra, India",
-    },
-    "highlights": [
-        {
-            "title": "Industry-Ready Skills",
-            "description": "Work on real-world projects with experienced mentors",
-        },
-        {
-            "title": "Competitive Environment",
-            "description": "Track your progress and compete with peers",
-        },
-        {
-            "title": "Career Opportunities",
-            "description": "Direct path to full-time positions with top companies",
-        },
-    ],
-}
-
 # Configuration
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 MODEL_PATH = "model.h5"
-MAX_WORKERS = 2  # Limit concurrent predictions
+MAX_WORKERS = 2
 
 # Create upload folder if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -53,6 +26,33 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 model = None
 class_names = None
 prediction_lock = threading.Lock()
+
+# Company profile
+COMPANY_PROFILE = {
+    "name": "CropGuard AI",
+    "tagline": "AI-powered crop disease detection for modern agriculture.",
+    "mission": "We provide cutting-edge artificial intelligence solutions for crop disease detection, helping farmers protect their crops and maximize yields.",
+    "logo_path": "/static/images/logo.png",
+    "contact": {
+        "email": "contact@cropguard.ai",
+        "phone": "+91 7350 675192",
+        "location": "India",
+    },
+    "highlights": [
+        {
+            "title": "AI Technology",
+            "description": "Advanced deep learning models for accurate disease detection",
+        },
+        {
+            "title": "Fast Analysis",
+            "description": "Get results in seconds with our optimized AI engine",
+        },
+        {
+            "title": "Easy to Use",
+            "description": "Simple interface accessible to farmers worldwide",
+        },
+    ],
+}
 
 def load_model_and_classes():
     """Load model and class names"""
@@ -100,42 +100,66 @@ def preprocess_image(image_path):
 def predict_disease(image_path):
     """Make prediction using the loaded model"""
     try:
+        # Check if image file exists and is readable
+        if not os.path.exists(image_path):
+            return {"error": "Image file not found", "success": False}
+
+        # Check file size
+        file_size = os.path.getsize(image_path)
+        if file_size == 0:
+            return {"error": "Image file is empty", "success": False}
+
         # Preprocess image
         processed_img = preprocess_image(image_path)
         if processed_img is None:
-            return {"error": "Could not process image"}
+            return {"error": "Could not process image. Please ensure it's a valid image file.", "success": False}
+
+        # Validate processed image shape
+        if processed_img.shape != (1, 224, 224, 3):
+            return {"error": "Image processing failed. Please try with a different image.", "success": False}
 
         # Make prediction with thread safety
-        # Use lock to prevent concurrent predictions (TensorFlow models are not fully thread-safe)
-        print(f"Starting prediction for image shape: {processed_img.shape}")
         with prediction_lock:
             try:
-                # Use batch_size=1 and reduce memory usage
                 predictions = model.predict(processed_img, verbose=0, batch_size=1)
-                print(f"Prediction completed, output shape: {predictions.shape}")
             except Exception as pred_error:
-                print(f"Model prediction error: {pred_error}")
-                raise pred_error
+                return {"error": "AI model prediction failed. Please try again.", "success": False}
+
+        # Validate predictions
+        if predictions is None or len(predictions) == 0:
+            return {"error": "No predictions received from model", "success": False}
 
         # Clear processed image from memory
         del processed_img
         gc.collect()
 
+        # Get prediction results
         predicted_class_idx = np.argmax(predictions[0])
         confidence = float(predictions[0][predicted_class_idx])
 
+        # Validate confidence range
+        if confidence < 0 or confidence > 1:
+            confidence = max(0, min(1, confidence))  # Clamp to valid range
+
         # Get class name
-        predicted_class = class_names[predicted_class_idx] if predicted_class_idx < len(class_names) else f"Class_{predicted_class_idx}"
+        if class_names and predicted_class_idx < len(class_names):
+            predicted_class = class_names[predicted_class_idx]
+        else:
+            predicted_class = f"Unknown_Class_{predicted_class_idx}"
 
         # Get top 3 predictions for more detailed response
-        top_3_indices = np.argsort(predictions[0])[-3:][::-1]
-        top_3_predictions = [
-            {
-                "class": class_names[idx] if idx < len(class_names) else f"Class_{idx}",
-                "confidence": float(predictions[0][idx])
-            }
-            for idx in top_3_indices
-        ]
+        try:
+            top_3_indices = np.argsort(predictions[0])[-3:][::-1]
+            top_3_predictions = [
+                {
+                    "class": class_names[idx] if class_names and idx < len(class_names) else f"Unknown_{idx}",
+                    "confidence": float(predictions[0][idx])
+                }
+                for idx in top_3_indices
+            ]
+        except Exception as e:
+            print(f"Error getting top predictions: {e}")
+            top_3_predictions = []
 
         # Clear predictions from memory
         del predictions
@@ -149,7 +173,17 @@ def predict_disease(image_path):
         }
 
     except Exception as e:
-        return {"error": str(e), "success": False}
+        error_str = str(e)
+
+        # Provide specific error messages based on error type
+        if "cannot identify image file" in error_str.lower():
+            return {"error": "Invalid image format. Please upload a JPG, PNG, or GIF file.", "success": False}
+        elif "memory" in error_str.lower():
+            return {"error": "Server memory error. Please try again later.", "success": False}
+        elif "shape" in error_str.lower():
+            return {"error": "Image processing error. Please try with a different image.", "success": False}
+        else:
+            return {"error": "Prediction failed. Please try again with a different image.", "success": False}
 
 def cleanup_old_files():
     """Clean up old uploaded files to free disk space"""
@@ -163,21 +197,22 @@ def cleanup_old_files():
                 print(f"Cleaned up old file: {filename}")
     except Exception as e:
         print(f"Error during cleanup: {e}")
- # Flask Routes
+
+# Flask Routes
 @app.route('/')
 def home():
-    """Company website home page (Civora Nexus)."""
+    """Home page."""
     return render_template('index.html', company=COMPANY_PROFILE)
 
-@app.route('/internships')
-def internships():
-    """Internships page."""
-    return render_template('internships.html', company=COMPANY_PROFILE)
+@app.route('/analyze')
+def analyze():
+    """AI Disease Analysis page."""
+    return render_template('analyze.html', company=COMPANY_PROFILE)
 
-@app.route('/companies')
-def companies():
-    """For Companies page."""
-    return render_template('companies.html', company=COMPANY_PROFILE)
+@app.route('/about')
+def about():
+    """About page."""
+    return render_template('about.html', company=COMPANY_PROFILE)
 
 @app.route('/contact')
 def contact():
@@ -186,95 +221,8 @@ def contact():
 
 @app.route('/api/company-profile')
 def company_profile():
-    """Return Civora Nexus company profile (JSON)."""
+    """Return company profile (JSON)."""
     return jsonify(COMPANY_PROFILE)
-
-@app.route('/company-logo')
-def company_logo():
-    """Serve Civora Nexus logo from configured path."""
-    from flask import send_file
-    logo_path = COMPANY_PROFILE.get("logo_path")
-    if not logo_path or not os.path.exists(logo_path):
-        return jsonify({"error": "Company logo not found"}), 404
-    return send_file(logo_path)
-
-@app.route('/predict', methods=['POST'])
-def predict():
-    """Handle image upload and prediction with thread safety"""
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part", "success": False})
-
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file", "success": False})
-
-    if file and allowed_file(file.filename):
-        try:
-            # Generate unique filename with timestamp to prevent conflicts
-            original_filename = secure_filename(file.filename)
-            file_ext = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'jpg'
-            unique_filename = f"{int(time.time())}_{uuid.uuid4().hex[:8]}.{file_ext}"
-            filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
-            file.save(filepath)
-
-            # Clean up old files periodically (every 10 requests)
-            if hasattr(predict, '_call_count'):
-                predict._call_count += 1
-            else:
-                predict._call_count = 1
-
-            if predict._call_count % 10 == 0:
-                cleanup_old_files()
-
-            # Make prediction
-            print(f"Processing image: {unique_filename}")
-            start_time = time.time()
-
-            result = predict_disease(filepath)
-
-            processing_time = time.time() - start_time
-            print(f"✅ Prediction completed in {processing_time:.2f} seconds")
-
-            # Clean up memory
-            gc.collect()
-
-            # Add image path to result for display
-            if result.get("success"):
-                result["image_path"] = f"/static/uploads/{unique_filename}"
-                result["processing_time"] = processing_time
-
-            # Clean up the uploaded file after a short delay (to allow display)
-            # Schedule cleanup after 5 minutes
-            def delayed_cleanup(file_path):
-                time.sleep(300)  # 5 minutes
-                try:
-                    if os.path.exists(file_path):
-                        os.remove(file_path)
-                        print(f"Cleaned up file: {file_path}")
-                except Exception as e:
-                    print(f"Error cleaning up file {file_path}: {e}")
-            
-            cleanup_thread = threading.Thread(target=delayed_cleanup, args=(filepath,), daemon=True)
-            cleanup_thread.start()
-
-            return jsonify(result)
-
-        except Exception as e:
-            print(f"Prediction error for {unique_filename}: {str(e)}")
-            # Clean up file on error
-            try:
-                if os.path.exists(filepath):
-                    os.remove(filepath)
-            except:
-                pass
-            return jsonify({"error": f"Prediction failed: {str(e)}", "success": False})
-
-    return jsonify({"error": "File type not allowed", "success": False})
-
-@app.route('/about')
-def about():
-    """About page."""
-    return render_template('about.html', company=COMPANY_PROFILE)
 
 @app.route('/health')
 def health():
@@ -285,6 +233,98 @@ def health():
         "classes_loaded": class_names is not None,
         "num_classes": len(class_names) if class_names else 0
     })
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    """Handle image upload and prediction"""
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part", "success": False})
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file", "success": False})
+
+    if file and allowed_file(file.filename):
+        filepath = None
+        try:
+            # Generate unique filename
+            original_filename = secure_filename(file.filename)
+            file_ext = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'jpg'
+            unique_filename = f"{int(time.time())}_{uuid.uuid4().hex[:8]}.{file_ext}"
+            filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+
+            # Save file
+            file.save(filepath)
+
+            # Verify file was saved and is readable
+            if not os.path.exists(filepath):
+                return jsonify({"error": "Failed to save uploaded file", "success": False})
+
+            # Check if model is loaded
+            if model is None:
+                return jsonify({"error": "AI model is not loaded. Please try again later.", "success": False})
+
+            if class_names is None:
+                return jsonify({"error": "Disease classes are not loaded. Please try again later.", "success": False})
+
+            # Clean up old files periodically
+            if hasattr(predict, '_call_count'):
+                predict._call_count += 1
+            else:
+                predict._call_count = 1
+
+            if predict._call_count % 10 == 0:
+                cleanup_old_files()
+
+            # Make prediction
+            start_time = time.time()
+            result = predict_disease(filepath)
+            processing_time = time.time() - start_time
+
+            # Clean up memory
+            gc.collect()
+
+            # Add image path to result for display
+            if result.get("success"):
+                result["image_path"] = f"/static/uploads/{unique_filename}"
+                result["processing_time"] = round(processing_time, 2)
+
+            # Clean up the uploaded file after a short delay
+            def delayed_cleanup(file_path):
+                time.sleep(300)  # 5 minutes
+                try:
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        print(f"Cleaned up file: {file_path}")
+                except Exception as e:
+                    print(f"Error cleaning up file {file_path}: {e}")
+
+            cleanup_thread = threading.Thread(target=delayed_cleanup, args=(filepath,), daemon=True)
+            cleanup_thread.start()
+
+            return jsonify(result)
+
+        except Exception as e:
+            error_msg = str(e)
+
+            # Clean up file on error
+            try:
+                if filepath and os.path.exists(filepath):
+                    os.remove(filepath)
+            except:
+                pass
+
+            # Provide user-friendly error messages
+            if "Cannot load OpenCV" in error_msg or "cv2" in error_msg.lower():
+                return jsonify({"error": "Image processing error. Please try with a different image.", "success": False})
+            elif "TensorFlow" in error_msg or "model" in error_msg.lower():
+                return jsonify({"error": "AI model error. Please try again later.", "success": False})
+            elif "memory" in error_msg.lower():
+                return jsonify({"error": "Server memory error. Please try again later.", "success": False})
+            else:
+                return jsonify({"error": "An unexpected error occurred. Please try again.", "success": False})
+
+    return jsonify({"error": "File type not allowed", "success": False})
 
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):

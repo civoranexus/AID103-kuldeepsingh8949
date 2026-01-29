@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Analyze Image | CropGuard AI</title>
+    <title>Analyze Disease | {{ company.name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Fonts & Icons -->
@@ -21,12 +21,13 @@
         <div class="container nav-flex">
             <div class="logo">
                 <i class="fas fa-leaf"></i>
-                <span>CropGuard AI</span>
+                <span>{{ company.name }}</span>
             </div>
             <nav>
                 <a href="/">Home</a>
-                <a href="/analyze" class="active">Analyze</a>
+                <a href="/analyze" class="active">Analyze Disease</a>
                 <a href="/about">About</a>
+                <a href="/contact">Contact</a>
             </nav>
         </div>
     </header>
@@ -94,7 +95,7 @@
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container footer-flex">
-            <p>© 2024 CropGuard AI | Powered by {{ company.name }} | {{ company.contact.email }} | {{ company.contact.phone }} | {{ company.contact.location }}</p>
+            <p>© 2024 {{ company.name }} | Powered by AI | {{ company.contact.email }} | {{ company.contact.phone }}</p>
         </div>
     </footer>
 

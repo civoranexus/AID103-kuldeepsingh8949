@@ -12,21 +12,20 @@
 
 <body>
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
                 <span>{{ company.name }}</span>
             </div>
-            <div class="nav-menu">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/internships" class="nav-link">Internships</a>
-                <a href="/companies" class="nav-link">For Companies</a>
-                <a href="/contact" class="nav-link">Contact</a>
-            </div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/analyze">Analyze Disease</a>
+                <a href="/about" class="active">About</a>
+                <a href="/contact">Contact</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
     <!-- About Hero -->
     <section class="hero about-hero">
@@ -41,8 +40,8 @@
             </div>
             <div class="hero-image">
                 <div class="image-placeholder">
-                    <i class="fas fa-briefcase"></i>
-                    <p>Internship Platform</p>
+                    <i class="fas fa-brain"></i>
+                    <p>AI Disease Detection</p>
                 </div>
             </div>
         </div>
@@ -53,27 +52,27 @@
         <div class="container">
             <div class="section-header">
                 <h2>Our Mission</h2>
-                <p>Fostering innovation and creating opportunities</p>
+                <p>Revolutionizing agriculture through AI technology</p>
             </div>
 
             <div class="mission-content">
                 <div class="mission-text">
-                    <h3>Building Careers Through Experience</h3>
+                    <h3>Protecting Crops with Artificial Intelligence</h3>
                     <p>{{ company.mission }}</p>
-                    <p>We connect students with leading companies and help them build industry-ready skills through real-world projects and mentorship.</p>
+                    <p>Our AI technology analyzes plant images to detect diseases early, helping farmers take preventive action and maximize their crop yields.</p>
                 </div>
                 <div class="mission-stats">
                     <div class="stat-card">
-                        <div class="stat-number">Mentors</div>
-                        <div class="stat-label">Guided learning</div>
+                        <div class="stat-number">38+</div>
+                        <div class="stat-label">Disease Types</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">Projects</div>
-                        <div class="stat-label">Real deliverables</div>
+                        <div class="stat-number">AI-Powered</div>
+                        <div class="stat-label">Deep Learning</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">Careers</div>
-                        <div class="stat-label">Opportunity pipeline</div>
+                        <div class="stat-number">Instant</div>
+                        <div class="stat-label">Analysis Results</div>
                     </div>
                 </div>
             </div>
@@ -84,8 +83,8 @@
     <section class="technology-section">
         <div class="container">
             <div class="section-header">
-                <h2>What We Offer</h2>
-                <p>Programs designed to make you industry-ready</p>
+                <h2>Our Technology</h2>
+                <p>Cutting-edge AI solutions for agricultural challenges</p>
             </div>
 
             <div class="tech-grid">
@@ -107,35 +106,35 @@
         <div class="container">
             <div class="section-header">
                 <h2>Our Team</h2>
-                <p>Mentors and builders supporting your growth</p>
+                <p>AI researchers and engineers driving agricultural innovation</p>
             </div>
 
             <div class="team-grid">
                 <div class="team-member">
                     <div class="member-avatar">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-brain"></i>
                     </div>
-                    <h3>Mentors</h3>
-                    <p>Experienced mentors guiding real-world projects</p>
-                    <div class="member-role">Mentorship</div>
+                    <h3>AI Researchers</h3>
+                    <p>Developing advanced deep learning models for plant disease detection</p>
+                    <div class="member-role">Machine Learning</div>
                 </div>
 
                 <div class="team-member">
                     <div class="member-avatar">
-                        <i class="fas fa-user-tie"></i>
+                        <i class="fas fa-seedling"></i>
                     </div>
-                    <h3>Industry Experts</h3>
-                    <p>Professionals from leading companies</p>
-                    <div class="member-role">Industry</div>
+                    <h3>Agricultural Experts</h3>
+                    <p>Domain specialists ensuring accuracy and agricultural relevance</p>
+                    <div class="member-role">Agriculture</div>
                 </div>
 
                 <div class="team-member">
                     <div class="member-avatar">
                         <i class="fas fa-code"></i>
                     </div>
-                    <h3>Platform Team</h3>
-                    <p>Engineers building a smooth internship experience</p>
-                    <div class="member-role">Product & Engineering</div>
+                    <h3>Engineering Team</h3>
+                    <p>Building scalable platforms for global agricultural impact</p>
+                    <div class="member-role">Software Engineering</div>
                 </div>
             </div>
         </div>
@@ -146,7 +145,7 @@
         <div class="container">
             <div class="contact-content">
                 <h2>Get In Touch</h2>
-                <p>Have questions or want to partner with us?</p>
+                <p>Have questions about our AI technology or need support?</p>
                 <div class="contact-info">
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
@@ -168,7 +167,7 @@
             <h2>Company Profile</h2>
             <div class="company-card">
                 <div class="company-header">
-                    <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                    <i class="fas fa-leaf" style="font-size: 2rem; color: #22c55e;"></i>
                     <div>
                         <h3>{{ company.name }}</h3>
                         <p class="company-tagline">{{ company.tagline }}</p>
@@ -200,7 +199,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                    <i class="fas fa-leaf" style="font-size: 2rem; color: #22c55e; margin-bottom: 10px;"></i>
                     <span>{{ company.name }}</span>
                     <p>{{ company.tagline }}</p>
                 </div>
@@ -208,9 +207,8 @@
                     <div class="footer-section">
                         <h4>Quick Links</h4>
                         <a href="/">Home</a>
+                        <a href="/analyze">Analyze Disease</a>
                         <a href="/about">About</a>
-                        <a href="/internships">Internships</a>
-                        <a href="/companies">For Companies</a>
                         <a href="/contact">Contact</a>
                     </div>
                 </div>
