@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import os
+import traceback
 import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -14,9 +15,12 @@ from concurrent.futures import ThreadPoolExecutor
 app = Flask(__name__)
 
 # Configuration
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MODEL_PATH = "model.h5"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+MIME_TO_EXT = {'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp'}
+MODEL_PATH = os.path.join(BASE_DIR, "model.h5")
+CLASS_NAMES_PATH = os.path.join(BASE_DIR, "class_names.json")
 MAX_WORKERS = 2
 
 # Create upload folder if it doesn't exist
@@ -69,7 +73,7 @@ def load_model_and_classes():
 
     if class_names is None:
         try:
-            with open('class_names.json', 'r') as f:
+            with open(CLASS_NAMES_PATH, 'r') as f:
                 class_names = json.load(f)
             print(f"Loaded {len(class_names)} class names")
         except FileNotFoundError:
@@ -81,13 +85,33 @@ def load_model_and_classes():
 load_model_and_classes()
 
 def allowed_file(filename):
+    if not filename or not isinstance(filename, str):
+        return False
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def get_file_extension(filename, content_type=None):
+    """Get valid extension from filename or content-type."""
+    if filename and '.' in filename:
+        ext = filename.rsplit('.', 1)[1].lower()
+        if ext in ALLOWED_EXTENSIONS:
+            return ext
+    # Only trust content-type for known image formats
+    if content_type and content_type in MIME_TO_EXT:
+        return MIME_TO_EXT[content_type]
+    return None  # cannot determine - caller will reject
 
 def preprocess_image(image_path):
     """Preprocess image for model prediction"""
     img = cv2.imread(image_path)
     if img is None:
-        return None
+        # Fallback: try PIL for WebP or other formats OpenCV may not handle
+        try:
+            from PIL import Image
+            pil_img = Image.open(image_path).convert('RGB')
+            img = np.array(pil_img)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        except Exception:
+            return None
 
     # Resize to match model input
     img = cv2.resize(img, (224, 224))
@@ -241,15 +265,21 @@ def predict():
         return jsonify({"error": "No file part", "success": False})
 
     file = request.files['file']
-    if file.filename == '':
+    filename = file.filename or ''
+    if not filename or filename.strip() == '':
         return jsonify({"error": "No selected file", "success": False})
 
-    if file and allowed_file(file.filename):
+    # Accept by extension OR by content-type (for WebP, or files with no/missing extension)
+    content_type = file.content_type or ''
+    file_ext = get_file_extension(filename, content_type)
+    if not file_ext or file_ext not in ALLOWED_EXTENSIONS:
+        return jsonify({"error": "File type not allowed. Please use JPG, PNG, GIF, or WebP.", "success": False})
+
+    if file:
         filepath = None
+        print(f"[PREDICT] Receiving: filename={filename}, content_type={content_type}, ext={file_ext}")
         try:
-            # Generate unique filename
-            original_filename = secure_filename(file.filename)
-            file_ext = original_filename.rsplit('.', 1)[1].lower() if '.' in original_filename else 'jpg'
+            # Generate unique filename (file_ext already determined above)
             unique_filename = f"{int(time.time())}_{uuid.uuid4().hex[:8]}.{file_ext}"
             filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
 
@@ -281,12 +311,16 @@ def predict():
             result = predict_disease(filepath)
             processing_time = time.time() - start_time
 
+            # Log if prediction returned an error
+            if not result.get("success"):
+                print(f"[PREDICT] predict_disease returned error: {result.get('error', 'Unknown')}")
+
             # Clean up memory
             gc.collect()
 
             # Add image path to result for display
             if result.get("success"):
-                result["image_path"] = f"/static/uploads/{unique_filename}"
+                result["image_path"] = f"/uploads/{unique_filename}"
                 result["processing_time"] = round(processing_time, 2)
 
             # Clean up the uploaded file after a short delay
@@ -306,15 +340,16 @@ def predict():
 
         except Exception as e:
             error_msg = str(e)
+            traceback.print_exc()  # Log full traceback for debugging
 
             # Clean up file on error
             try:
                 if filepath and os.path.exists(filepath):
                     os.remove(filepath)
-            except:
+            except Exception:
                 pass
 
-            # Provide user-friendly error messages
+            # Provide user-friendly error messages (include actual error for diagnosis)
             if "Cannot load OpenCV" in error_msg or "cv2" in error_msg.lower():
                 return jsonify({"error": "Image processing error. Please try with a different image.", "success": False})
             elif "TensorFlow" in error_msg or "model" in error_msg.lower():
@@ -326,17 +361,20 @@ def predict():
 
     return jsonify({"error": "File type not allowed", "success": False})
 
-@app.route('/static/uploads/<filename>')
+@app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    """Serve uploaded images"""
+    """Serve uploaded images (separate from /static to avoid routing conflicts)"""
     from flask import send_from_directory
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 if __name__ == '__main__':
     # Clean up any leftover files on startup
     cleanup_old_files()
-    print("🚀 Starting CropGuard AI Web Server...")
     print("🌐 Access at: http://localhost:8000")
     print("📊 Model loaded and ready for predictions")
     print("⚡ Threaded mode enabled for better performance")
-    app.run(debug=False, host='0.0.0.0', port=8000, threaded=True)
+    app.run(debug=False, host='127.0.0.1', port=8000, threaded=True)
+    # Bind to localhost and a non-privileged port; allow overrides via env vars.
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5050"))
+    app.run(debug=False, host=host, port=port, threaded=True)

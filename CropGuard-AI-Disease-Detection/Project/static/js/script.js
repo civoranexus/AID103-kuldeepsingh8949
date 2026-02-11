@@ -137,9 +137,11 @@ function analyzeImage() {
     // Show loading modal
     showLoadingModal();
 
-    // Create FormData
+    // Create FormData - pass filename explicitly for Safari/compatibility
     const formData = new FormData();
-    formData.append('file', window.selectedFile);
+    const file = window.selectedFile;
+    const fileName = file.name && file.name.trim() ? file.name : 'image.jpg';
+    formData.append('file', file, fileName);
 
     // Set timeout
     const controller = new AbortController();
@@ -153,8 +155,17 @@ function analyzeImage() {
         })
         .then(response => {
             clearTimeout(timeoutId);
+            const contentType = response.headers.get('content-type') || '';
             if (!response.ok) {
+                if (contentType.includes('application/json')) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || `Server error: ${response.status}`);
+                    });
+                }
                 throw new Error(`Server error: ${response.status}`);
+            }
+            if (!contentType.includes('application/json')) {
+                throw new Error('Invalid response from server. Please try again.');
             }
             return response.json();
         })
@@ -167,10 +178,12 @@ function analyzeImage() {
                 analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyze Disease';
             }
 
-            if (data.success) {
+            if (data && data.success) {
                 showResults(data);
             } else {
-                showError(data.error || 'An error occurred during analysis');
+                const errMsg = (data && data.error) ? data.error : 'An error occurred during analysis.';
+                console.error('[CropGuard] Prediction failed:', data);
+                showError(errMsg);
             }
         })
         .catch(error => {
@@ -185,6 +198,8 @@ function analyzeImage() {
 
             if (error.name === 'AbortError') {
                 showError('Request timed out. Please try again.');
+            } else if (error.message) {
+                showError(error.message);
             } else {
                 showError('Network error. Please check your connection and try again.');
             }
@@ -340,11 +355,16 @@ function hideLoadingModal() {
 function showError(message) {
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
+    // Ensure we always show a helpful message (avoid generic "An error occurred")
+    let displayMsg = (message && String(message).trim()) ? message : 'An error occurred during analysis. Please try again.';
+    if (displayMsg === 'An error occurred') {
+        displayMsg = 'An error occurred during analysis. Please try again.';
+    }
     if (errorModal && errorMessage) {
-        errorMessage.textContent = message;
+        errorMessage.textContent = displayMsg;
         errorModal.classList.add('show');
     } else {
-        alert(message); // Fallback if modal elements don't exist
+        alert(displayMsg);
     }
 }
 
