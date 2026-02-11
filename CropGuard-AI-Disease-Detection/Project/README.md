@@ -1,5 +1,7 @@
 # 🌱 CropGuard AI - Plant Disease Detection Web App
 
+> **Status: ✅ Complete** — Production ready.
+
 A modern web application for detecting plant diseases using Artificial Intelligence. Upload plant images and get instant disease diagnosis with high accuracy.
 
 ## 🚀 Features
@@ -41,11 +43,13 @@ pip install -r requirements.txt
 
 ### 2. Run the Application
 ```bash
-python App.py
+python3 start_server.py
+# or
+python3 App.py
 ```
 
 ### 3. Open in Browser
-Navigate to `http://localhost:5000`
+Navigate to `http://localhost:8000`
 
 ## 📁 Project Structure
 

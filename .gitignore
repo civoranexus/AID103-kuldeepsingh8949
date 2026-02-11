@@ -50,6 +50,13 @@ temp/
 *.tmp
 *.temp
 
+# CropGuard uploads (user-generated, temporary)
+CropGuard-AI-Disease-Detection/Project/static/uploads/*.jpg
+CropGuard-AI-Disease-Detection/Project/static/uploads/*.jpeg
+CropGuard-AI-Disease-Detection/Project/static/uploads/*.png
+CropGuard-AI-Disease-Detection/Project/static/uploads/*.gif
+CropGuard-AI-Disease-Detection/Project/static/uploads/*.webp
+
 # Package lock files (optional - uncomment if needed)
 # package-lock.json
 # yarn.lock
