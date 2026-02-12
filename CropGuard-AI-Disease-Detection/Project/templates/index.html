@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ company.name }} | AI Crop Disease Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>{{ company.name }}</span>
+            </div>
+            <nav>
+                <a href="/" class="active">Home</a>
+                <a href="/analyze">Analyze Disease</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section id="home" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text">
+                <h1>{{ company.name }}</h1>
+                <p>{{ company.tagline }}</p>
+                <div class="hero-actions">
+                    <a href="/analyze" class="btn primary">
+                        <i class="fas fa-search"></i> Analyze Your Crops
+                    </a>
+                    <a href="/about" class="btn outline">Learn More</a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449" alt="Plant Analysis">
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICE OVERVIEW -->
+    <section id="overview" class="overview">
+        <div class="container">
+            <h2>About {{ company.name }}</h2>
+            <div class="overview-content">
+                <div class="overview-text">
+                    <p>{{ company.mission }}</p>
+                    <p>Our AI-powered platform uses advanced deep learning technology to identify crop diseases from leaf images, helping farmers take timely action to protect their crops and maximize yields.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Why Choose {{ company.name }}?</h2>
+            <div class="feature-grid">
+                {% for item in company.highlights %}
+                <div class="feature-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description }}</p>
+                </div>
+                {% endfor %}
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Reliable Results</h3>
+                    <p>Trained on extensive datasets with high accuracy for confident decision making.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-globe"></i>
+                    <h3>Global Access</h3>
+                    <p>Available worldwide to support farmers in every region and climate.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="steps">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="step-grid">
+                <div class="step">
+                    <span>1</span>
+                    <h3>Capture Image</h3>
+                    <p>Take a clear photo of your plant leaf showing any symptoms or discoloration.</p>
+                </div>
+                <div class="step">
+                    <span>2</span>
+                    <h3>Upload & Analyze</h3>
+                    <p>Upload your image to our platform and let our AI analyze it instantly.</p>
+                </div>
+                <div class="step">
+                    <span>3</span>
+                    <h3>Get Results</h3>
+                    <p>Receive detailed analysis with disease identification and confidence levels.</p>
+                </div>
+                <div class="step">
+                    <span>4</span>
+                    <h3>Take Action</h3>
+                    <p>Use the insights to apply appropriate treatment and protect your crops.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECHNICAL DETAILS -->
+    <section id="technical" class="technical">
+        <div class="container">
+            <h2>AI Technology & Benefits</h2>
+            <div class="technical-grid">
+                <div class="tech-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>Advanced AI</h3>
+                    <ul>
+                        <li>Deep learning neural networks</li>
+                        <li>Trained on 38+ plant disease types</li>
+                        <li>High accuracy disease identification</li>
+                        <li>Continuous model improvement</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Performance</h3>
+                    <ul>
+                        <li>Instant analysis in seconds</li>
+                        <li>Optimized for mobile devices</li>
+                        <li>Batch processing capabilities</li>
+                        <li>99.9% uptime reliability</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-users"></i>
+                    <h3>For Farmers</h3>
+                    <ul>
+                        <li>Easy-to-use interface</li>
+                        <li>No technical expertise required</li>
+                        <li>Cost-effective disease monitoring</li>
+                        <li>Actionable treatment recommendations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPANY PROFILE -->
+    <section id="company" class="company">
+        <div class="container">
+            <h2>Company Profile</h2>
+            <div class="company-card">
+                <div class="company-header">
+                    <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                    <div>
+                        <h3>{{ company.name }}</h3>
+                        <p class="company-tagline">{{ company.tagline }}</p>
+                    </div>
+                </div>
+                <p class="company-mission">{{ company.mission }}</p>
+
+                <div class="company-highlights">
+                    {% for item in company.highlights %}
+                    <div class="company-highlight">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="company-contact">
+                    <h4>Contact Us</h4>
+                    <p><strong>Email:</strong> {{ company.contact.email }}</p>
+                    <p><strong>Phone:</strong> {{ company.contact.phone }}</p>
+                    <p><strong>Location:</strong> {{ company.contact.location }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section id="cta" class="cta">
+        <div class="container">
+            <h2>Protect Your Crops Today</h2>
+            <p>Start analyzing your plant health with {{ company.name }}'s advanced AI technology</p>
+            <a href="/analyze" class="btn primary large">
+                <i class="fas fa-search"></i> Analyze Now
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-flex">
+            <p>© 2024 {{ company.name }} | {{ company.contact.email }} | {{ company.contact.phone }} | {{ company.contact.location }}</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

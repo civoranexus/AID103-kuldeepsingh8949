@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - {{ company.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>{{ company.name }}</span>
+            </div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/analyze">Analyze Disease</a>
+                <a href="/about" class="active">About</a>
+                <a href="/contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- About Hero -->
+    <section class="hero about-hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    About <span class="highlight">{{ company.name }}</span>
+                </h1>
+                <p class="hero-subtitle">
+                    {{ company.tagline }}
+                </p>
+            </div>
+            <div class="hero-image">
+                <div class="image-placeholder">
+                    <i class="fas fa-brain"></i>
+                    <p>AI Disease Detection</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Mission</h2>
+                <p>Revolutionizing agriculture through AI technology</p>
+            </div>
+
+            <div class="mission-content">
+                <div class="mission-text">
+                    <h3>Protecting Crops with Artificial Intelligence</h3>
+                    <p>{{ company.mission }}</p>
+                    <p>Our AI technology analyzes plant images to detect diseases early, helping farmers take preventive action and maximize their crop yields.</p>
+                </div>
+                <div class="mission-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">38+</div>
+                        <div class="stat-label">Disease Types</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">AI-Powered</div>
+                        <div class="stat-label">Deep Learning</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">Instant</div>
+                        <div class="stat-label">Analysis Results</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Technology</h2>
+                <p>Cutting-edge AI solutions for agricultural challenges</p>
+            </div>
+
+            <div class="tech-grid">
+                {% for item in company.highlights %}
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Team</h2>
+                <p>AI researchers and engineers driving agricultural innovation</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Researchers</h3>
+                    <p>Developing advanced deep learning models for plant disease detection</p>
+                    <div class="member-role">Machine Learning</div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Agricultural Experts</h3>
+                    <p>Domain specialists ensuring accuracy and agricultural relevance</p>
+                    <div class="member-role">Agriculture</div>
+                </div>
+
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Engineering Team</h3>
+                    <p>Building scalable platforms for global agricultural impact</p>
+                    <div class="member-role">Software Engineering</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <h2>Get In Touch</h2>
+                <p>Have questions about our AI technology or need support?</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ company.contact.email }}</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>{{ company.contact.phone }}</span>
+                    </div>
+                </div>
+                <a href="/contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Profile -->
+    <section class="company">
+        <div class="container">
+            <h2>Company Profile</h2>
+            <div class="company-card">
+                <div class="company-header">
+                    <i class="fas fa-leaf" style="font-size: 2rem; color: #22c55e;"></i>
+                    <div>
+                        <h3>{{ company.name }}</h3>
+                        <p class="company-tagline">{{ company.tagline }}</p>
+                    </div>
+                </div>
+                <p class="company-mission">{{ company.mission }}</p>
+
+                <div class="company-highlights">
+                    {% for item in company.highlights %}
+                    <div class="company-highlight">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="company-contact">
+                    <h4>Contact Us</h4>
+                    <p><strong>Email:</strong> {{ company.contact.email }}</p>
+                    <p><strong>Phone:</strong> {{ company.contact.phone }}</p>
+                    <p><strong>Location:</strong> {{ company.contact.location }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-leaf" style="font-size: 2rem; color: #22c55e; margin-bottom: 10px;"></i>
+                    <span>{{ company.name }}</span>
+                    <p>{{ company.tagline }}</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>Quick Links</h4>
+                        <a href="/">Home</a>
+                        <a href="/analyze">Analyze Disease</a>
+                        <a href="/about">About</a>
+                        <a href="/contact">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 {{ company.name }}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

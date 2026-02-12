@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Contact | {{ company.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>{{ company.name }}</span>
+            </div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/analyze">Analyze Disease</a>
+                <a href="/about">About</a>
+                <a href="/contact" class="active">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="overview">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <div class="company-card">
+                <div class="company-header">
+                    <i class="fas fa-leaf" style="font-size: 2rem; color: #22c55e;"></i>
+                    <div>
+                        <h3>{{ company.name }}</h3>
+                        <p class="company-tagline">{{ company.tagline }}</p>
+                    </div>
+                </div>
+
+                <div class="company-contact">
+                    <p><strong>Email:</strong> {{ company.contact.email }}</p>
+                    <p><strong>Phone:</strong> {{ company.contact.phone }}</p>
+                    <p><strong>Location:</strong> {{ company.contact.location }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-flex">
+            <p>© 2024 {{ company.name }} | {{ company.contact.email }} | {{ company.contact.phone }} | {{ company.contact.location }}</p>
+        </div>
+    </footer>
+</body>
+
+</html>

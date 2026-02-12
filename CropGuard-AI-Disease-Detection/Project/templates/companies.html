@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>For Companies | {{ company.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="container nav-flex">
+            <div class="logo">
+                <img class="company-logo" src="/company-logo" alt="{{ company.name }} logo">
+                <span>{{ company.name }}</span>
+            </div>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/internships">Internships</a>
+                <a href="/companies" class="active">For Companies</a>
+                <a href="/contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="overview">
+        <div class="container">
+            <h2>For Companies</h2>
+            <div class="overview-content">
+                <div class="overview-text">
+                    <p>Hire faster by evaluating candidates through real-world projects. Build a reliable internship-to-hiring pipeline with {{ company.name }}.</p>
+                </div>
+            </div>
+
+            <div class="technical-grid">
+                <div class="tech-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Access Talent</h3>
+                    <ul>
+                        <li>Students with verified skills</li>
+                        <li>Domain-focused internship tracks</li>
+                        <li>Portfolio-first evaluation</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Project-Based Screening</h3>
+                    <ul>
+                        <li>Real deliverables, not just resumes</li>
+                        <li>Mentor feedback loops</li>
+                        <li>Progress dashboards</li>
+                    </ul>
+                </div>
+                <div class="tech-card">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Hiring Outcomes</h3>
+                    <ul>
+                        <li>Intern-to-full-time conversion</li>
+                        <li>Reduced hiring time</li>
+                        <li>Better cultural fit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Partner With Us</h2>
+            <p>Reach out to start your internship hiring pipeline.</p>
+            <a href="/contact" class="btn primary large"><i class="fas fa-handshake"></i> Contact Sales</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container footer-flex">
+            <p>© 2024 {{ company.name }} | {{ company.contact.email }} | {{ company.contact.phone }} | {{ company.contact.location }}</p>
+        </div>
+    </footer>
+</body>
+
+</html>
